@@ -1,0 +1,78 @@
+name: student_talent_profiling_app
+description: A talent management system for UTHM students
+version: 1.0.0+1
+
+# Use main.dart as requested
+main: lib/main.dart
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI Components
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10
+  flutter_markdown: ^0.6.18
+  markdown: ^7.1.1
+  
+  # State Management
+  provider: ^6.1.2
+  
+  # Image and File Handling
+  image_picker: ^1.0.7
+  file_picker: ^8.0.0+1
+  image: ^4.1.7
+  video_compress: ^3.1.2
+  cached_network_image: ^3.3.1
+  flutter_cache_manager: ^3.3.1
+  path: ^1.9.0
+  
+  # HTTP and API
+  http: ^1.2.1
+  
+  # Network and Connectivity
+  connectivity_plus: ^5.0.2
+  
+  # Storage and Path
+  path_provider: ^2.1.1
+  
+  # Utilities
+  intl: ^0.20.2
+  timeago: ^3.6.1
+  uuid: ^4.3.3
+  shared_preferences: ^2.2.3
+  flutter_dotenv: ^5.0.2
+
+  # Supabase
+  supabase_flutter: ^2.3.4
+
+  # Sharing
+  share_plus: ^7.2.2
+  url_launcher: ^6.2.6
+
+  # Voice & Text-to-Speech
+  speech_to_text: ^7.3.0
+  flutter_tts: ^4.2.3
+
+  # UI Enhancements
+  shimmer: ^3.0.0
+  webview_flutter: ^4.13.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.3
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
+  # generate: true  # Temporarily disabled to fix build issues
+  assets:
+    - assets/images/
+    - assets/.env
+    - assets/data/

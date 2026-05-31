@@ -1,0 +1,33 @@
+from . import (
+    ai_assistant,
+    ai_langchain,
+    ai_hybrid,
+    auth,
+    events,
+    media,
+    ml_analytics,
+    payment,
+    profiles_supabase,
+    search,
+    showcase,
+    student_analytics,
+    talents,
+    users,
+)
+
+__all__ = [
+    "ai_assistant",
+    "ai_langchain",
+    "ai_hybrid",
+    "auth",
+    "events",
+    "media",
+    "ml_analytics",
+    "payment",
+    "profiles_supabase",
+    "search",
+    "showcase",
+    "student_analytics",
+    "talents",
+    "users",
+]

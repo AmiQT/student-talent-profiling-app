@@ -1,0 +1,93 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Chatbot from '../components/Chatbot.astro';
+
+interface Props {
+    title: string;
+    activeSection: string;
+}
+
+const { title, activeSection } = Astro.props;
+---
+
+<MainLayout title={title}>
+    <div class="min-h-screen bg-gray-50">
+        <Sidebar activeSection={activeSection} />
+
+        <div class="lg:ml-64 min-h-screen flex flex-col transition-all duration-300">
+            <!-- Top Header -->
+            <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-20">
+                <div class="flex items-center gap-4">
+                    <button id="sidebar-toggle" class="lg:hidden text-gray-500 hover:text-gray-700 p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-xl font-bold text-gray-800">{title}</h1>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div id="ai-status" class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-sm text-gray-600" title="AI Assistant">
+                        <i class="fas fa-robot"></i>
+                        <span class="font-medium">Offline</span>
+                    </div>
+                    <button id="logout-btn" class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </div>
+            </header>
+            <!-- Main Content -->
+            <main class="flex-1 p-4 lg:p-8 overflow-x-hidden pb-24">
+                <slot />
+            </main>
+        </div>
+        <Chatbot />
+    </div>
+</MainLayout>
+
+<script>
+    import { supabase } from '../lib/supabase';
+    import { isDemoMode, setDemoMode } from '../lib/demoStore';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const isDemo = isDemoMode();
+        
+        if (isDemo) {
+            // Add Demo Banner
+            const banner = document.createElement('div');
+            banner.className = 'bg-indigo-600 text-white px-4 py-2 text-center text-sm font-medium sticky top-0 z-50 shadow-md';
+            banner.innerHTML = '<i class="fas fa-info-circle mr-2"></i> You are viewing this dashboard in <strong>Demo Mode</strong>. Changes will not be saved.';
+            document.body.prepend(banner);
+
+            // Update Status Badge
+            const aiStatus = document.getElementById('ai-status');
+            if (aiStatus) {
+                aiStatus.className = 'hidden md:flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-sm border border-indigo-100';
+                aiStatus.innerHTML = '<i class="fas fa-eye"></i><span class="font-medium">Demo View</span>';
+            }
+        } else {
+            // Normal Auth Check (Basic)
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (!session) {
+                    // window.location.href = '/login'; // Uncomment to enforce auth
+                }
+            });
+        }
+    });
+
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        if (isDemoMode()) {
+            setDemoMode(false);
+            window.location.href = '/login';
+            return;
+        }
+
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error('Error logging out:', error);
+            alert('Failed to logout');
+        } else {
+            window.location.href = '/login';
+        }
+    });
+</script>

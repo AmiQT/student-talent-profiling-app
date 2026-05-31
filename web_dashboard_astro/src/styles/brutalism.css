@@ -1,0 +1,430 @@
+/* ========================================
+   BRUTALISM DESIGN SYSTEM 🎪⚡
+   Neo-Brutalism + Bento Grid Dashboard
+   ======================================== */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ======== COLOR PALETTE ======== */
+:root {
+  /* Primary Colors (Bold & Vibrant) */
+  --brutalism-gold: #FFD700;
+  --brutalism-cyan: #00D9FF;
+  --brutalism-magenta: #FF006E;
+  --brutalism-purple: #7209b7;
+  --brutalism-lime: #CCFF00;
+  --brutalism-orange: #FF6B00;
+  
+  /* Base Colors */
+  --brutalism-white: #FFFFFF;
+  --brutalism-black: #000000;
+  --brutalism-gray: #F5F5F5;
+  
+  /* Semantic Colors */
+  --color-success: #00FF88;
+  --color-warning: #FFD700;
+  --color-error: #FF006E;
+  --color-info: #00D9FF;
+  
+  /* Typography */
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  
+  /* Borders & Shadows */
+  --border-width: 4px;
+  --border-color: var(--brutalism-black);
+  
+  /* Hard Offset Shadows */
+  --shadow-sm: 4px 4px 0 var(--brutalism-black);
+  --shadow-md: 8px 8px 0 var(--brutalism-black);
+  --shadow-lg: 12px 12px 0 var(--brutalism-black);
+  --shadow-xl: 16px 16px 0 var(--brutalism-black);
+}
+
+/* ======== BASE STYLES ======== */
+* {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+/* ======== ANIMATIONS ======== */
+
+/* Slide In Brutalist - Entry Animation */
+@keyframes slideInBrutalist {
+  from {
+    transform: translateY(30px) rotate(-2deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Pop Animation - For buttons */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Wiggle Animation */
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-2deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+/* ======== UTILITY CLASSES ======== */
+
+/* Borders */
+.brutal-border {
+  border: var(--border-width) solid var(--border-color);
+}
+
+.brutal-border-top {
+  border-top: var(--border-width) solid var(--border-color);
+}
+
+.brutal-border-bottom {
+  border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.brutal-border-left {
+  border-left: var(--border-width) solid var(--border-color);
+}
+
+.brutal-border-right {
+  border-right: var(--border-width) solid var(--border-color);
+}
+
+/* Shadows */
+.brutal-shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.brutal-shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.brutal-shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.brutal-shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+.brutal-shadow-none {
+  box-shadow: none;
+}
+
+/* Background Colors */
+.bg-brutal-gold {
+  background-color: var(--brutalism-gold);
+}
+
+.bg-brutal-cyan {
+  background-color: var(--brutalism-cyan);
+}
+
+.bg-brutal-magenta {
+  background-color: var(--brutalism-magenta);
+}
+
+.bg-brutal-purple {
+  background-color: var(--brutalism-purple);
+}
+
+.bg-brutal-lime {
+  background-color: var(--brutalism-lime);
+}
+
+.bg-brutal-orange {
+  background-color: var(--brutalism-orange);
+}
+
+.bg-brutal-white {
+  background-color: var(--brutalism-white);
+}
+
+.bg-brutal-black {
+  background-color: var(--brutalism-black);
+}
+
+.bg-brutal-gray {
+  background-color: var(--brutalism-gray);
+}
+
+/* Text Colors */
+.text-brutal-black {
+  color: var(--brutalism-black);
+}
+
+.text-brutal-white {
+  color: var(--brutalism-white);
+}
+
+/* ======== BENTO CARD BASE STYLES ======== */
+.bento-card {
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card:hover {
+  transform: translate(-4px, -4px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+}
+
+/* Staggered entrance animation */
+.bento-card {
+  animation: slideInBrutalist 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.bento-card:nth-child(1) { animation-delay: 0.1s; }
+.bento-card:nth-child(2) { animation-delay: 0.2s; }
+.bento-card:nth-child(3) { animation-delay: 0.3s; }
+.bento-card:nth-child(4) { animation-delay: 0.4s; }
+.bento-card:nth-child(5) { animation-delay: 0.5s; }
+.bento-card:nth-child(6) { animation-delay: 0.6s; }
+.bento-card:nth-child(7) { animation-delay: 0.7s; }
+.bento-card:nth-child(8) { animation-delay: 0.8s; }
+
+/* ======== BRUTAL BUTTON STYLES ======== */
+.brutal-btn {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: var(--text-sm);
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.brutal-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: var(--shadow-none);
+}
+
+/* ======== BENTO GRID LAYOUTS ======== */
+.bento-grid {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* Desktop Layout */
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 200px;
+  }
+  
+  .bento-large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  
+  .bento-wide {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  
+  .bento-tall {
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+  
+  .bento-full {
+    grid-column: span 3;
+    grid-row: span 1;
+  }
+}
+
+/* Tablet Layout */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 180px;
+  }
+  
+  .bento-large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  
+  .bento-wide {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  
+  .bento-tall {
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+  
+  .bento-full {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 639px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 150px;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .bento-large,
+  .bento-wide,
+  .bento-tall,
+  .bento-full {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* ======== TABLE STYLES (BRUTALIST) ======== */
+.brutal-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.brutal-table thead {
+  background-color: var(--brutalism-gold);
+  border: var(--border-width) solid var(--border-color);
+}
+
+.brutal-table th {
+  padding: 1rem;
+  text-align: left;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: var(--text-sm);
+  border-right: var(--border-width) solid var(--border-color);
+}
+
+.brutal-table th:last-child {
+  border-right: none;
+}
+
+.brutal-table tbody tr {
+  border: var(--border-width) solid var(--border-color);
+  border-top: none;
+  transition: all 0.2s ease;
+}
+
+.brutal-table tbody tr:hover {
+  transform: translateX(-4px);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--brutalism-gray);
+}
+
+.brutal-table td {
+  padding: 1rem;
+  border-right: var(--border-width) solid var(--border-color);
+}
+
+.brutal-table td:last-child {
+  border-right: none;
+}
+
+/* ======== BADGE STYLES ======== */
+.brutal-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 2px solid var(--border-color);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.brutal-badge-success {
+  background-color: var(--color-success);
+  color: var(--brutalism-black);
+}
+
+.brutal-badge-warning {
+  background-color: var(--color-warning);
+  color: var(--brutalism-black);
+}
+
+.brutal-badge-error {
+  background-color: var(--color-error);
+  color: var(--brutalism-white);
+}
+
+.brutal-badge-info {
+  background-color: var(--color-info);
+  color: var(--brutalism-black);
+}
+
+/* ======== INPUT STYLES ======== */
+.brutal-input {
+  padding: 0.75rem 1rem;
+  border: var(--border-width) solid var(--border-color);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  background-color: var(--brutalism-white);
+  transition: all 0.2s ease;
+}
+
+.brutal-input:focus {
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transform: translate(-2px, -2px);
+}
+
+/* ======== CHART CONTAINER ======== */
+.brutal-chart-container {
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  background-color: var(--brutalism-white);
+}

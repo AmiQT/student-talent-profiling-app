@@ -1,0 +1,247 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+---
+
+<DashboardLayout title="Dashboard Overview" activeSection="overview">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Stats Cards -->
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer group"
+            onclick="window.location.href='/dashboard/users'"
+        >
+            <div class="flex items-start justify-between mb-4">
+                <div
+                    class="p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-colors"
+                >
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+                <span
+                    class="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-lg"
+                    >Total Users</span
+                >
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-1" id="total-users">
+                0
+            </h3>
+            <p class="text-sm text-gray-500 flex items-center gap-1">
+                <span class="text-green-500 font-medium flex items-center">
+                    <i class="fas fa-arrow-up text-xs"></i>
+                    <span>12%</span>
+                </span>
+                <span>vs last month</span>
+            </p>
+        </div>
+
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer group"
+            onclick="window.location.href='/dashboard/events'"
+        >
+            <div class="flex items-start justify-between mb-4">
+                <div
+                    class="p-3 bg-purple-50 rounded-xl group-hover:bg-purple-100 transition-colors"
+                >
+                    <i class="fas fa-calendar-alt text-purple-600 text-xl"></i>
+                </div>
+                <span
+                    class="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-lg"
+                    >Active Events</span
+                >
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-1" id="total-events">
+                0
+            </h3>
+            <p class="text-sm text-gray-500 flex items-center gap-1">
+                <span class="text-green-500 font-medium flex items-center">
+                    <i class="fas fa-arrow-up text-xs"></i>
+                    <span>5%</span>
+                </span>
+                <span>vs last month</span>
+            </p>
+        </div>
+
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+        >
+            <div class="flex items-start justify-between mb-4">
+                <div
+                    class="p-3 bg-green-50 rounded-xl group-hover:bg-green-100 transition-colors"
+                >
+                    <i class="fas fa-id-card text-green-600 text-xl"></i>
+                </div>
+                <span
+                    class="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-lg"
+                    >Student Profiles</span
+                >
+            </div>
+            <h3
+                class="text-3xl font-bold text-gray-800 mb-1"
+                id="total-profiles"
+            >
+                0
+            </h3>
+            <p class="text-sm text-gray-500 flex items-center gap-1">
+                <span class="text-gray-400">System wide</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">User Growth</h3>
+            <div class="h-64">
+                <canvas id="userGrowthChart"></canvas>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">
+                Department Distribution
+            </h3>
+            <div class="h-64">
+                <canvas id="departmentChart"></canvas>
+            </div>
+        </div>
+    </div>
+</DashboardLayout>
+
+<script>
+    import { supabase } from "../../lib/supabase";
+
+    // Declare Chart.js global type from CDN
+    declare const Chart: any;
+
+    async function loadStats() {
+        try {
+            // Get total counts in parallel
+            const [
+                { count: userCount },
+                { count: eventCount },
+                { count: profileCount }
+            ] = await Promise.all([
+                supabase.from("users").select("*", { count: "exact", head: true }),
+                supabase.from("events").select("*", { count: "exact", head: true }),
+                supabase.from("profiles").select("*", { count: "exact", head: true })
+            ]);
+
+            const userEl = document.getElementById("total-users");
+            if (userEl && userCount !== null) userEl.textContent = userCount.toString();
+
+            const eventEl = document.getElementById("total-events");
+            if (eventEl && eventCount !== null) eventEl.textContent = eventCount.toString();
+
+            const profileEl = document.getElementById("total-profiles");
+            if (profileEl && profileCount !== null) profileEl.textContent = profileCount.toString();
+
+        } catch (error) {
+            console.error("Error loading stats:", error);
+        }
+    }
+
+    async function loadCharts() {
+        try {
+            // --- User Growth Chart (Dynamic Calculation) ---
+            const { data: userData, error: userError } = await supabase
+                .from("users")
+                .select("created_at")
+                .order('created_at', { ascending: true });
+
+            if (userError) throw userError;
+
+            // Group by month
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const currentYear = new Date().getFullYear();
+            const growthData: { [key: string]: number } = {};
+            
+            // Initialize last 6 months
+            const last6Months = [];
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                const monthName = months[d.getMonth()];
+                last6Months.push(monthName);
+                growthData[monthName] = 0;
+            }
+
+            userData?.forEach(user => {
+                const date = new Date(user.created_at);
+                const monthName = months[date.getMonth()];
+                if (growthData.hasOwnProperty(monthName)) {
+                    growthData[monthName]++;
+                }
+            });
+
+            const userGrowthCtx = document.getElementById("userGrowthChart") as HTMLCanvasElement;
+            if (userGrowthCtx) {
+                new Chart(userGrowthCtx, {
+                    type: "line",
+                    data: {
+                        labels: last6Months,
+                        datasets: [{
+                            label: "New Users",
+                            data: last6Months.map(m => growthData[m]),
+                            borderColor: "rgb(59, 130, 246)",
+                            backgroundColor: "rgba(59, 130, 246, 0.1)",
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: "rgb(59, 130, 246)",
+                            pointBorderColor: "#fff",
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: "rgba(0, 0, 0, 0.05)" } },
+                            x: { grid: { display: false } }
+                        }
+                    },
+                });
+            }
+
+            // --- Department Distribution Chart (Dynamic) ---
+            const { data: deptData, error: deptError } = await supabase
+                .from("users")
+                .select("department");
+
+            const departments: { [key: string]: number } = {};
+            if (!deptError && deptData) {
+                deptData.forEach((u: any) => {
+                    const dept = u.department || "Other";
+                    departments[dept] = (departments[dept] || 0) + 1;
+                });
+            }
+
+            const departmentCtx = document.getElementById("departmentChart") as HTMLCanvasElement;
+            if (departmentCtx) {
+                new Chart(departmentCtx, {
+                    type: "doughnut",
+                    data: {
+                        labels: Object.keys(departments),
+                        datasets: [{
+                            data: Object.values(departments),
+                            backgroundColor: ["#3b82f6", "#a855f7", "#22c55e", "#f97316", "#ec4899", "#64748b"],
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 6 } }
+                        }
+                    },
+                });
+            }
+        } catch (error) {
+            console.error("Error loading charts:", error);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadStats();
+        loadCharts();
+    });
+</script>
+

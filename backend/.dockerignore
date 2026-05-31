@@ -1,0 +1,59 @@
+# =============================================================================
+# Docker Ignore - Speed up builds by excluding unnecessary files
+# =============================================================================
+
+# Virtual environment (we build fresh in container)
+.venv/
+venv/
+env/
+
+# Environment files — never copy real credentials into image
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (no need to copy into image)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Misc
+*.bak
+*.tmp
+.env.example

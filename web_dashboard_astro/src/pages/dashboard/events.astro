@@ -1,0 +1,1079 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+---
+
+<DashboardLayout title="Event Management" activeSection="events">
+    <div
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+    >
+        <div
+            class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+            <div class="flex items-center gap-4 flex-1">
+                <div class="relative flex-1 max-w-md">
+                    <i
+                        class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    ></i>
+                    <input
+                        type="text"
+                        placeholder="Search events..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea] focus:ring-2 focus:ring-[#667eea]/10 transition-all"
+                    />
+                </div>
+                <select
+                    class="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea] bg-white text-gray-600"
+                >
+                    <option value="">All Categories</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Competition">Competition</option>
+                    <option value="Workshop">Workshop</option>
+                    <option value="Seminar">Seminar</option>
+                </select>
+            </div>
+            <button
+                id="add-event-btn"
+                class="px-4 py-2 bg-[#667eea] text-white rounded-xl hover:bg-[#5a6fd6] transition-colors flex items-center gap-2 shadow-lg shadow-[#667eea]/30"
+            >
+                <i class="fas fa-plus"></i>
+                <span>Add Event</span>
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th
+                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                            >Title</th
+                        >
+                        <th
+                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                            >Date</th
+                        >
+                        <th
+                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                            >Category</th
+                        >
+                        <th
+                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                            >Status</th
+                        >
+                        <th
+                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                            >Participants</th
+                        >
+                        <th
+                            class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                            >Actions</th
+                        >
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100" id="events-table-body">
+                    <tr>
+                        <td
+                            colspan="5"
+                            class="px-6 py-8 text-center text-gray-500"
+                        >
+                            <div class="flex flex-col items-center gap-2">
+                                <i
+                                    class="fas fa-circle-notch fa-spin text-2xl text-[#667eea]"
+                                ></i>
+                                <span>Loading events...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+            class="p-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500"
+        >
+            <span
+                >Showing 1 to 10 of <span id="total-count">0</span> entries</span
+            >
+            <div class="flex gap-2">
+                <button
+                    class="px-3 py-1 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                    disabled>Previous</button
+                >
+                <button
+                    class="px-3 py-1 border border-gray-200 rounded-lg hover:bg-gray-50"
+                    >Next</button
+                >
+            </div>
+        </div>
+        <!-- Add Event Modal -->
+        <div
+            id="add-event-modal"
+            class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
+        >
+            <div
+                class="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl transform transition-all"
+            >
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    Add New Event
+                </h3>
+                <form id="add-event-form" class="space-y-4">
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Title</label
+                        >
+                        <input
+                            type="text"
+                            id="add-title"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                            required
+                            placeholder="e.g. AI Workshop 2025"
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Date</label
+                            >
+                            <input
+                                type="datetime-local"
+                                id="add-date"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Category</label
+                            >
+                            <select
+                                id="add-category"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                            >
+                                <option value="Academic">Academic</option>
+                                <option value="Competition">Competition</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Seminar">Seminar</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Location</label
+                            >
+                            <input
+                                type="text"
+                                id="add-location"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                                placeholder="e.g. Dewan Sultan Ibrahim"
+                            />
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Max Participants</label
+                            >
+                            <input
+                                type="number"
+                                id="add-max-participants"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                                placeholder="Leave empty for unlimited"
+                                min="1"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Event Image</label
+                        >
+                        <div class="flex items-center gap-4">
+                            <div
+                                id="add-image-preview"
+                                class="w-20 h-20 rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden group relative"
+                            >
+                                <i
+                                    class="fas fa-image text-gray-400 group-hover:scale-110 transition-transform"
+                                ></i>
+                            </div>
+                            <div class="flex-1">
+                                <input
+                                    type="file"
+                                    id="add-image-input"
+                                    class="hidden"
+                                    accept="image/*"
+                                />
+                                <button
+                                    type="button"
+                                    onclick="document.getElementById('add-image-input').click()"
+                                    class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors w-full"
+                                >
+                                    Choose Image
+                                </button>
+                                <p class="text-[10px] text-gray-400 mt-1">
+                                    Recommended size: 1200x630px
+                                </p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="add-image-url" />
+                    </div>
+
+                    <!-- Price & Payment -->
+                    <div class="space-y-3 mb-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                id="add-is-paid"
+                                class="w-4 h-4 rounded border-gray-300 text-[#667eea] focus:ring-[#667eea]"
+                            />
+                            <span class="text-sm font-medium text-gray-700"
+                                >This is a Paid Event</span
+                            >
+                        </label>
+
+                        <div id="add-price-container" class="hidden">
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Price (RM)</label
+                            >
+                            <input
+                                type="number"
+                                id="add-price"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Status</label
+                        >
+                        <select
+                            id="add-status"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                        >
+                            <option value="draft">📝 Draft</option>
+                            <option value="published" selected
+                                >✓ Published</option
+                            >
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button
+                            type="button"
+                            onclick="document.getElementById('add-event-modal').classList.add('hidden'); document.getElementById('add-event-modal').classList.remove('flex');"
+                            class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            class="px-4 py-2 bg-[#667eea] text-white rounded-xl hover:bg-[#5a6fd6] transition-colors shadow-lg shadow-[#667eea]/30"
+                        >
+                            Add Event
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Event Modal -->
+        <div
+            id="edit-event-modal"
+            class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
+        >
+            <div
+                class="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl transform transition-all"
+            >
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Edit Event</h3>
+                <form id="edit-event-form" class="space-y-4">
+                    <input type="hidden" id="edit-event-id" />
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Title</label
+                        >
+                        <input
+                            type="text"
+                            id="edit-title"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                            required
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Date</label
+                            >
+                            <input
+                                type="datetime-local"
+                                id="edit-date"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Category</label
+                            >
+                            <select
+                                id="edit-category"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                            >
+                                <option value="Academic">Academic</option>
+                                <option value="Competition">Competition</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Seminar">Seminar</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Location</label
+                            >
+                            <input
+                                type="text"
+                                id="edit-location"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                            />
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Max Participants</label
+                            >
+                            <input
+                                type="number"
+                                id="edit-max-participants"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                                placeholder="Leave empty for unlimited"
+                                min="1"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Event Image</label
+                        >
+                        <div class="flex items-center gap-4">
+                            <div
+                                id="edit-image-preview"
+                                class="w-20 h-20 rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden group relative"
+                            >
+                                <i
+                                    class="fas fa-image text-gray-400 group-hover:scale-110 transition-transform"
+                                ></i>
+                            </div>
+                            <div class="flex-1">
+                                <input
+                                    type="file"
+                                    id="edit-image-input"
+                                    class="hidden"
+                                    accept="image/*"
+                                />
+                                <button
+                                    type="button"
+                                    onclick="document.getElementById('edit-image-input').click()"
+                                    class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors w-full"
+                                >
+                                    Change Image
+                                </button>
+                                <p class="text-[10px] text-gray-400 mt-1">
+                                    Recommended size: 1200x630px
+                                </p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-image-url" />
+                    </div>
+
+                    <!-- Price & Payment -->
+                    <div class="space-y-3 mb-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                id="edit-is-paid"
+                                class="w-4 h-4 rounded border-gray-300 text-[#667eea] focus:ring-[#667eea]"
+                            />
+                            <span class="text-sm font-medium text-gray-700"
+                                >This is a Paid Event</span
+                            >
+                        </label>
+
+                        <div id="edit-price-container" class="hidden">
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                                >Price (RM)</label
+                            >
+                            <input
+                                type="number"
+                                id="edit-price"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Status</label
+                        >
+                        <select
+                            id="edit-status"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea]"
+                        >
+                            <option value="draft">📝 Draft</option>
+                            <option value="published">✓ Published</option>
+                            <option value="completed">✓ Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button
+                            type="button"
+                            onclick="document.getElementById('edit-event-modal').classList.add('hidden'); document.getElementById('edit-event-modal').classList.remove('flex');"
+                            class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            class="px-4 py-2 bg-[#667eea] text-white rounded-xl hover:bg-[#5a6fd6] transition-colors shadow-lg shadow-[#667eea]/30"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Participants Modal -->
+        <div
+            id="participants-modal"
+            class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
+        >
+            <div
+                class="bg-white rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl transform transition-all max-h-[80vh] flex flex-col"
+            >
+                <div class="flex items-center justify-between mb-4">
+                    <h3
+                        class="text-xl font-bold text-gray-800"
+                        id="participants-modal-title"
+                    >
+                        Event Participants
+                    </h3>
+                    <button
+                        onclick="document.getElementById('participants-modal').classList.add('hidden'); document.getElementById('participants-modal').classList.remove('flex');"
+                        class="text-gray-400 hover:text-gray-600"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="participants-list" class="flex-1 overflow-y-auto">
+                    <div
+                        class="flex items-center justify-center py-8 text-gray-500"
+                    >
+                        <i class="fas fa-circle-notch fa-spin mr-2"></i> Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</DashboardLayout>
+
+<script>
+    import { supabase } from "../../lib/supabase";
+
+    // Extend Window interface for editEvent
+    declare global {
+        interface Window {
+            editEvent: (eventId: string | null) => Promise<void>;
+        }
+    }
+
+    // Add Event Logic
+    const addModal = document.getElementById("add-event-modal");
+    const addBtn = document.getElementById("add-event-btn");
+    const addForm = document.getElementById("add-event-form");
+
+    addBtn?.addEventListener("click", () => {
+        addModal?.classList.remove("hidden");
+        addModal?.classList.add("flex");
+        // Reset image preview when opening
+        const preview = document.getElementById("add-image-preview");
+        const urlInput = document.getElementById(
+            "add-image-url",
+        ) as HTMLInputElement;
+        if (preview)
+            preview.innerHTML =
+                '<i class="fas fa-image text-gray-400 group-hover:scale-110 transition-transform"></i>';
+        if (urlInput) urlInput.value = "";
+    });
+
+    const BACKEND_URL =
+        import.meta.env.PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+    async function uploadToCloudinary(file: File) {
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) throw new Error("Not authenticated");
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch(`${BACKEND_URL}/api/media/upload/image`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${session.access_token}`,
+            },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || "Upload failed");
+        }
+
+        const data = await response.json();
+        return data.media.url; // url from result of Backend API
+    }
+
+    // Handle Add Image Input
+    const addImageInput = document.getElementById(
+        "add-image-input",
+    ) as HTMLInputElement;
+    const addImagePreview = document.getElementById("add-image-preview");
+    const addImageUrlInput = document.getElementById(
+        "add-image-url",
+    ) as HTMLInputElement;
+
+    addImageInput?.addEventListener("change", async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+
+        if (addImagePreview) {
+            addImagePreview.innerHTML =
+                '<i class="fas fa-circle-notch fa-spin text-gray-400"></i>';
+        }
+
+        try {
+            const url = await uploadToCloudinary(file);
+            if (addImageUrlInput) addImageUrlInput.value = url;
+            if (addImagePreview) {
+                addImagePreview.innerHTML = `<img src="${url}" class="w-full h-full object-cover" />`;
+            }
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert(
+                "Upload failed: " +
+                    (error instanceof Error ? error.message : "Unknown error"),
+            );
+            if (addImagePreview)
+                addImagePreview.innerHTML =
+                    '<i class="fas fa-image text-gray-400"></i>';
+        }
+    });
+
+    // Handle Edit Image Input
+    const editImageInput = document.getElementById(
+        "edit-image-input",
+    ) as HTMLInputElement;
+    const editImagePreview = document.getElementById("edit-image-preview");
+    const editImageUrlInput = document.getElementById(
+        "edit-image-url",
+    ) as HTMLInputElement;
+
+    editImageInput?.addEventListener("change", async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+
+        if (editImagePreview) {
+            editImagePreview.innerHTML =
+                '<i class="fas fa-circle-notch fa-spin text-gray-400"></i>';
+        }
+
+        try {
+            const url = await uploadToCloudinary(file);
+            if (editImageUrlInput) editImageUrlInput.value = url;
+            if (editImagePreview) {
+                editImagePreview.innerHTML = `<img src="${url}" class="w-full h-full object-cover" />`;
+            }
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert(
+                "Upload failed: " +
+                    (error instanceof Error ? error.message : "Unknown error"),
+            );
+            if (editImagePreview)
+                editImagePreview.innerHTML =
+                    '<i class="fas fa-image text-gray-400"></i>';
+        }
+    });
+
+    addForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = (document.getElementById("add-title") as HTMLInputElement)
+            .value;
+        const date = (document.getElementById("add-date") as HTMLInputElement)
+            .value;
+        const category = (
+            document.getElementById("add-category") as HTMLInputElement
+        ).value;
+        const location = (
+            document.getElementById("add-location") as HTMLInputElement
+        ).value;
+        const maxParticipants = (
+            document.getElementById("add-max-participants") as HTMLInputElement
+        ).value;
+        const status = (
+            document.getElementById("add-status") as HTMLSelectElement
+        ).value;
+
+        const imageUrl = (
+            document.getElementById("add-image-url") as HTMLInputElement
+        ).value;
+
+        const isPaid = (
+            document.getElementById("add-is-paid") as HTMLInputElement
+        ).checked;
+        const price = (document.getElementById("add-price") as HTMLInputElement)
+            .value;
+
+        try {
+            const { error } = await supabase.from("events").insert([
+                {
+                    title,
+                    event_date: new Date(date).toISOString(),
+                    category,
+                    location,
+                    status,
+                    image_url: imageUrl,
+                    max_participants: maxParticipants
+                        ? parseInt(maxParticipants)
+                        : null,
+                    is_paid: isPaid,
+                    price: isPaid && price ? parseFloat(price) : null,
+                    is_active: true,
+                    current_participants: 0,
+                },
+            ]);
+
+            if (error) throw error;
+
+            alert("Event added successfully");
+            window.location.reload();
+        } catch (error: unknown) {
+            console.error("Error adding event:", error);
+            alert(
+                "Failed to add event: " +
+                    (error instanceof Error ? error.message : "Unknown error"),
+            );
+        }
+    });
+
+    // Toggle Price Input Logic
+    const togglePrice = (checkboxId: string, containerId: string) => {
+        const checkbox = document.getElementById(
+            checkboxId,
+        ) as HTMLInputElement;
+        const container = document.getElementById(containerId);
+        if (!checkbox || !container) return;
+
+        checkbox.addEventListener("change", () => {
+            if (checkbox.checked) {
+                container.classList.remove("hidden");
+            } else {
+                container.classList.add("hidden");
+                const input = container.querySelector("input");
+                if (input) input.value = "";
+            }
+        });
+    };
+
+    togglePrice("add-is-paid", "add-price-container");
+    togglePrice("edit-is-paid", "edit-price-container");
+
+    // Edit Event Logic
+    const editModal = document.getElementById("edit-event-modal");
+    const editForm = document.getElementById("edit-event-form");
+    const titleInput = document.getElementById(
+        "edit-title",
+    ) as HTMLInputElement;
+    const dateInput = document.getElementById("edit-date") as HTMLInputElement;
+    const categoryInput = document.getElementById(
+        "edit-category",
+    ) as HTMLInputElement;
+    const locationInput = document.getElementById(
+        "edit-location",
+    ) as HTMLInputElement;
+    const idInput = document.getElementById(
+        "edit-event-id",
+    ) as HTMLInputElement;
+
+    (window as any).editEvent = async (eventId: string | null) => {
+        try {
+            const { data: event, error } = await supabase
+                .from("events")
+                .select("*")
+                .eq("id", eventId)
+                .single();
+
+            if (error) throw error;
+
+            // Populate form
+            idInput.value = event.id;
+            titleInput.value = event.title || "";
+            // Format date for datetime-local input (YYYY-MM-DDThh:mm)
+            if (event.event_date) {
+                const d = new Date(event.event_date);
+                d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+                dateInput.value = d.toISOString().slice(0, 16);
+            }
+            categoryInput.value = event.category || "Academic";
+            locationInput.value = event.location || "";
+            editImageUrlInput.value = event.image_url || "";
+
+            // Populate Price
+            const isPaidCheckbox = document.getElementById(
+                "edit-is-paid",
+            ) as HTMLInputElement;
+            const priceContainer = document.getElementById(
+                "edit-price-container",
+            );
+            const priceInput = document.getElementById(
+                "edit-price",
+            ) as HTMLInputElement;
+
+            if (isPaidCheckbox && priceContainer && priceInput) {
+                isPaidCheckbox.checked = event.is_paid || false;
+                if (event.is_paid) {
+                    priceContainer.classList.remove("hidden");
+                    priceInput.value = event.price || "";
+                } else {
+                    priceContainer.classList.add("hidden");
+                    priceInput.value = "";
+                }
+            }
+            if (editImagePreview) {
+                if (event.image_url) {
+                    editImagePreview.innerHTML = `<img src="${event.image_url}" class="w-full h-full object-cover" />`;
+                } else {
+                    editImagePreview.innerHTML =
+                        '<i class="fas fa-image text-gray-400 group-hover:scale-110 transition-transform"></i>';
+                }
+            }
+
+            // Show modal
+            editModal?.classList.remove("hidden");
+            editModal?.classList.add("flex");
+        } catch (error) {
+            console.error("Error fetching event:", error);
+            alert("Failed to load event details");
+        }
+    };
+
+    // Handle Save
+    editForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const eventId = idInput.value;
+        const updates = {
+            title: titleInput.value,
+            event_date: new Date(dateInput.value).toISOString(),
+            category: categoryInput.value,
+            location: locationInput.value,
+            image_url: editImageUrlInput.value,
+            is_paid: (
+                document.getElementById("edit-is-paid") as HTMLInputElement
+            ).checked,
+            price:
+                (document.getElementById("edit-is-paid") as HTMLInputElement)
+                    .checked &&
+                (document.getElementById("edit-price") as HTMLInputElement)
+                    .value
+                    ? parseFloat(
+                          (
+                              document.getElementById(
+                                  "edit-price",
+                              ) as HTMLInputElement
+                          ).value,
+                      )
+                    : null,
+            updated_at: new Date().toISOString(),
+        };
+
+        try {
+            const { error } = await supabase
+                .from("events")
+                .update(updates)
+                .eq("id", eventId);
+
+            if (error) throw error;
+
+            alert("Event updated successfully");
+            window.location.reload();
+        } catch (error) {
+            console.error("Error updating event:", error);
+            alert("Failed to update event");
+        }
+    });
+
+    async function loadEvents() {
+        try {
+            const { data: events, error } = await supabase
+                .from("events")
+                .select("*")
+                .order("event_date", { ascending: true })
+                .limit(10);
+
+            if (error) throw error;
+
+            const tbody = document.getElementById("events-table-body");
+            if (!tbody) return;
+
+            if (events.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                            <div class="flex flex-col items-center gap-2">
+                                <i class="fas fa-calendar-times text-4xl text-gray-300 mb-2"></i>
+                                <span class="font-medium">No events found</span>
+                                <span class="text-sm">Create your first event to get started</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = events
+                .map(
+                    (event) => `
+                <tr class="hover:bg-gray-50 transition-colors group">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 font-bold text-lg overflow-hidden border border-purple-100">
+                                ${event.image_url ? `<img src="${event.image_url}" class="w-full h-full object-cover" />` : '<i class="fas fa-calendar-day"></i>'}
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${event.title || "Untitled Event"}</div>
+                                <div class="text-xs text-gray-500">${event.location || "No location"}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${new Date(event.event_date).toLocaleDateString()}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col gap-1 items-start">
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                ${event.category || "General"}
+                            </span>
+                            ${event.is_paid ? `<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">RM ${event.price}</span>` : ""}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full ${
+                            event.status === "draft"
+                                ? "bg-gray-100 text-gray-600"
+                                : event.status === "completed"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : "bg-green-100 text-green-700"
+                        }">
+                            ${event.status === "draft" ? "📝 Draft" : event.status === "completed" ? "✓ Completed" : "✓ Published"}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <button class="view-participants-btn flex items-center gap-1 hover:text-[#667eea] transition-colors ${event.max_participants && event.current_participants >= event.max_participants ? "text-red-500" : "text-gray-500"}" data-id="${event.id}" data-title="${event.title}">
+                            <i class="fas fa-users text-xs"></i>
+                            <span>${event.current_participants || 0}${event.max_participants ? " / " + event.max_participants : ""}</span>
+                            ${event.max_participants && event.current_participants >= event.max_participants ? '<span class="text-xs ml-1 text-red-500">FULL</span>' : '<i class="fas fa-eye text-xs ml-1 opacity-0 group-hover:opacity-100"></i>'}
+                        </button>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button class="view-participants-btn text-gray-400 hover:text-green-500 transition-colors mr-2" data-id="${event.id}" data-title="${event.title}" title="View Participants">
+                            <i class="fas fa-user-friends pointer-events-none"></i>
+                        </button>
+                        <button class="edit-btn text-gray-400 hover:text-[#667eea] transition-colors mr-2" data-id="${event.id}">
+                            <i class="fas fa-edit pointer-events-none"></i>
+                        </button>
+                        <button class="delete-btn text-gray-400 hover:text-red-600 transition-colors" data-id="${event.id}">
+                            <i class="fas fa-trash pointer-events-none"></i>
+                        </button>
+                    </td>
+                </tr>
+            `,
+                )
+                .join("");
+
+            // Update count
+            const countEl = document.getElementById("total-count");
+            if (countEl) countEl.textContent = events.length.toString();
+
+            // Add Event Listeners via Delegation
+            tbody.addEventListener("click", async (e) => {
+                const target = e.target as HTMLElement;
+
+                // Handle Delete
+                if (target.classList.contains("delete-btn")) {
+                    const eventId = target.getAttribute("data-id");
+                    if (!eventId) return;
+
+                    if (!confirm("Are you sure you want to delete this event?"))
+                        return;
+
+                    try {
+                        const { error } = await supabase
+                            .from("events")
+                            .delete()
+                            .eq("id", eventId);
+
+                        if (error) throw error;
+
+                        alert("Event deleted successfully");
+                        window.location.reload();
+                    } catch (error) {
+                        console.error("Error deleting event:", error);
+                        alert("Failed to delete event");
+                    }
+                }
+
+                // Handle Edit
+                if (target.classList.contains("edit-btn")) {
+                    const eventId = target.getAttribute("data-id");
+                    (window as any).editEvent(eventId);
+                }
+
+                // Handle View Participants
+                if (target.closest(".view-participants-btn")) {
+                    const button = target.closest(
+                        ".view-participants-btn",
+                    ) as HTMLButtonElement;
+                    const eventId = button.dataset.id;
+                    const eventTitle = button.dataset.title;
+
+                    if (!eventId) return;
+
+                    const modal = document.getElementById("participants-modal");
+                    const titleEl = document.getElementById(
+                        "participants-modal-title",
+                    );
+                    const listEl = document.getElementById("participants-list");
+
+                    if (titleEl)
+                        titleEl.textContent = `Participants: ${eventTitle}`;
+                    if (listEl)
+                        listEl.innerHTML =
+                            '<div class="flex items-center justify-center py-8 text-gray-500"><i class="fas fa-circle-notch fa-spin mr-2"></i> Loading...</div>';
+
+                    modal?.classList.remove("hidden");
+                    modal?.classList.add("flex");
+
+                    try {
+                        // Fetch participants with user details
+                        const { data: participants, error } = await supabase
+                            .from("event_participations")
+                            .select("*, users(name, email)")
+                            .eq("event_id", eventId)
+                            .order("registration_date", { ascending: false });
+
+                        if (error) throw error;
+
+                        if (!participants || participants.length === 0) {
+                            if (listEl)
+                                listEl.innerHTML = `
+                                <div class="flex flex-col items-center justify-center py-8 text-gray-500">
+                                    <i class="fas fa-user-slash text-4xl text-gray-300 mb-2"></i>
+                                    <span>No participants registered yet</span>
+                                </div>
+                            `;
+                        } else {
+                            if (listEl)
+                                listEl.innerHTML = `
+                                <div class="text-sm text-gray-500 mb-3">${participants.length} participant(s) registered</div>
+                                <div class="space-y-2">
+                                    ${participants
+                                        .map(
+                                            (p: any) => `
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white text-xs font-bold">
+                                                    ${p.users?.name?.[0]?.toUpperCase() || "?"}
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-800">${p.users?.name || "Unknown"}</div>
+                                                    <div class="text-xs text-gray-500">${p.users?.email || ""}</div>
+                                                </div>
+                                            </div>
+                                            <span class="px-2 py-1 text-xs rounded-full ${
+                                                p.attendance_status ===
+                                                "attended"
+                                                    ? "bg-green-100 text-green-700"
+                                                    : p.attendance_status ===
+                                                        "absent"
+                                                      ? "bg-red-100 text-red-700"
+                                                      : "bg-blue-100 text-blue-700"
+                                            }">
+                                                ${p.attendance_status || "Registered"}
+                                            </span>
+                                        </div>
+                                    `,
+                                        )
+                                        .join("")}
+                                </div>
+                            `;
+                        }
+                    } catch (error) {
+                        console.error("Error loading participants:", error);
+                        if (listEl)
+                            listEl.innerHTML = `
+                            <div class="flex flex-col items-center justify-center py-8 text-red-500">
+                                <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                                <span>Failed to load participants</span>
+                            </div>
+                        `;
+                    }
+                }
+            });
+        } catch (error) {
+            console.error("Error loading events:", error);
+            const tbody = document.getElementById("events-table-body");
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-red-500">
+                            Failed to load events.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadEvents);
+</script>

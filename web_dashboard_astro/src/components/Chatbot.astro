@@ -1,0 +1,288 @@
+---
+
+---
+
+<div
+    id="chatbot-container"
+    class="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none"
+>
+    <!-- Chat Window (Hidden by default) -->
+    <div
+        id="chat-window"
+        class="mb-4 w-[350px] h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right scale-0 opacity-0 pointer-events-auto"
+    >
+        <!-- Header -->
+        <div
+            class="bg-gradient-to-r from-[#667eea] to-[#764ba2] p-4 flex items-center justify-between text-white"
+        >
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm"
+                >
+                    <i class="fas fa-robot text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm">AI Assistant</h3>
+                    <p class="text-xs text-white/80 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-green-400 rounded-full"
+                        ></span>
+                        Online
+                    </p>
+                </div>
+            </div>
+            <button
+                id="close-chat"
+                class="p-1 hover:bg-white/10 rounded-lg transition-colors"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div
+            class="flex-1 p-4 overflow-y-auto bg-gray-50 space-y-4 custom-scrollbar"
+            id="chat-messages"
+        >
+            <!-- Welcome Message -->
+            <div class="flex gap-3">
+                <div
+                    class="w-8 h-8 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white flex-shrink-0 text-xs"
+                >
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div
+                    class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm text-gray-600 max-w-[80%]"
+                >
+                    Hi! I'm your campus AI assistant. How can I help you manage
+                    the dashboard today?
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white border-t border-gray-100">
+            <form id="chat-form" class="relative">
+                <input
+                    type="text"
+                    id="chat-input"
+                    placeholder="Type your message..."
+                    class="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#667eea] focus:bg-white transition-all text-sm"
+                />
+                <button
+                    type="submit"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-[#667eea] text-white rounded-lg hover:bg-[#5a6fd6] transition-colors shadow-md shadow-blue-200"
+                >
+                    <i class="fas fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Floating Toggle Button -->
+    <button
+        id="chat-toggle"
+        class="w-14 h-14 bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-full shadow-lg shadow-purple-500/30 text-white flex items-center justify-center text-2xl hover:scale-110 hover:shadow-purple-500/50 transition-all duration-300 group pointer-events-auto"
+    >
+        <i class="fas fa-comment-dots group-hover:animate-pulse"></i>
+    </button>
+</div>
+
+<script>
+    import { supabase } from "../lib/supabase";
+
+    const chatContainer = document.getElementById("chatbot-container");
+    const chatWindow = document.getElementById("chat-window");
+    const chatToggle = document.getElementById("chat-toggle");
+    const closeChat = document.getElementById("close-chat");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input") as HTMLInputElement;
+    const chatMessages = document.getElementById("chat-messages");
+
+    const BACKEND_URL =
+        import.meta.env.PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+    // Use LangChain v2 API for better stability
+    const AI_ENDPOINT = `${BACKEND_URL}/api/ai/v2/command`;
+
+    let isOpen = false;
+    let sessionId: string | null = null; // Track session for conversation memory
+
+    function toggleChat() {
+        isOpen = !isOpen;
+        if (isOpen) {
+            chatWindow?.classList.remove("scale-0", "opacity-0");
+            chatWindow?.classList.add("scale-100", "opacity-100");
+            setTimeout(() => chatInput?.focus(), 300);
+        } else {
+            chatWindow?.classList.remove("scale-100", "opacity-100");
+            chatWindow?.classList.add("scale-0", "opacity-0");
+        }
+    }
+
+    chatToggle?.addEventListener("click", toggleChat);
+    closeChat?.addEventListener("click", toggleChat);
+
+    chatForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const message = chatInput?.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, "user");
+        chatInput.value = "";
+
+        // Show typing indicator (optional, but good for UX)
+        const loadingId = addLoadingMessage();
+
+        try {
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+            const token = session?.access_token;
+
+            if (!token) {
+                removeMessage(loadingId);
+                addMessage("Please login to use the AI assistant.", "ai");
+                return;
+            }
+
+            const response = await fetch(AI_ENDPOINT, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    command: message,
+                    session_id: sessionId, // Include session for conversation memory
+                    context: {
+                        page: window.location.pathname,
+                        userAgent: navigator.userAgent,
+                    },
+                }),
+            });
+
+            const data = await response.json();
+            removeMessage(loadingId);
+
+            // Save session ID for conversation continuity
+            if (data.session_id) {
+                sessionId = data.session_id;
+            }
+
+            if (response.ok && data.success) {
+                addMessage(data.message, "ai");
+            } else {
+                console.error("AI Error:", data);
+                addMessage(
+                    data.detail ||
+                        "Sorry, there was a technical issue. Please try again.",
+                    "ai",
+                );
+            }
+        } catch (error) {
+            console.error("Network Error:", error);
+            removeMessage(loadingId);
+            addMessage(
+                "Sorry, failed to connect to server. Please ensure the backend is running.",
+                "ai",
+            );
+        }
+    });
+
+    function parseMarkdown(text: string): string {
+        // Convert markdown to HTML for chat display
+        return (
+            text
+                // Headers: ### text
+                .replace(
+                    /^###\s+(.+)$/gm,
+                    '<strong class="text-purple-600">$1</strong>',
+                )
+                .replace(/^##\s+(.+)$/gm, '<strong class="text-lg">$1</strong>')
+                // Bold: **text** or __text__
+                .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                .replace(/__(.+?)__/g, "<strong>$1</strong>")
+                // Italic: *text* or _text_
+                .replace(/\*(.+?)\*/g, "<em>$1</em>")
+                .replace(/_(.+?)_/g, "<em>$1</em>")
+                // Bullet points: • item, - item, or * item at start of line
+                .replace(
+                    /^[•\-\*]\s+(.+)$/gm,
+                    '<div class="flex gap-2 ml-2"><span class="text-purple-500">•</span><span>$1</span></div>',
+                )
+                // Numbered lists: 1. item
+                .replace(
+                    /^(\d+)\.\s+(.+)$/gm,
+                    '<div class="flex gap-2 ml-2"><span class="text-purple-500 font-bold">$1.</span><span>$2</span></div>',
+                )
+                // Multiple line breaks become proper spacing
+                .replace(/\n\n+/g, '<div class="h-3"></div>')
+                // Single line breaks
+                .replace(/\n/g, "<br>")
+        );
+    }
+
+    function addMessage(text: string, sender: "user" | "ai") {
+        if (!chatMessages) return;
+
+        const div = document.createElement("div");
+        div.className = `flex gap-3 ${sender === "user" ? "flex-row-reverse" : ""} mb-4`;
+
+        const avatar =
+            sender === "ai"
+                ? `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white flex-shrink-0 text-xs"><i class="fas fa-robot"></i></div>`
+                : `<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 flex-shrink-0 text-xs"><i class="fas fa-user"></i></div>`;
+
+        // Parse markdown for AI messages
+        const formattedText = sender === "ai" ? parseMarkdown(text) : text;
+
+        const bubble = `
+            <div class="${sender === "ai" ? "bg-white border border-gray-100 text-gray-600" : "bg-[#667eea] text-white shadow-md shadow-blue-200"} p-3 rounded-2xl ${sender === "ai" ? "rounded-tl-none" : "rounded-tr-none"} text-sm max-w-[80%]">
+                ${formattedText}
+            </div>
+        `;
+
+        div.innerHTML = sender === "ai" ? avatar + bubble : bubble + avatar;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addLoadingMessage() {
+        if (!chatMessages) return "";
+        const id = "loading-" + Date.now();
+        const div = document.createElement("div");
+        div.id = id;
+        div.className = `flex gap-3 mb-4`;
+        div.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white flex-shrink-0 text-xs"><i class="fas fa-robot"></i></div>
+            <div class="bg-white border border-gray-100 text-gray-600 p-3 rounded-2xl rounded-tl-none text-sm">
+                <i class="fas fa-circle-notch fa-spin text-[#667eea]"></i> Thinking...
+            </div>
+        `;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return id;
+    }
+
+    function removeMessage(id: string) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+</script>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+    }
+</style>

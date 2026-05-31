@@ -1,0 +1,2180 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+---
+
+<DashboardLayout title="Analytics" activeSection="analytics">
+    <!-- Actions Toolbar -->
+    <div class="flex justify-end gap-4 mb-6">
+        <button
+            id="generate-report-btn"
+            class="bg-white text-gray-700 border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-2 transition-colors shadow-sm"
+        >
+            <i class="fas fa-file-pdf text-red-500"></i> Generate Report
+        </button>
+        <button
+            id="export-csv-btn"
+            class="bg-white text-gray-700 border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-2 transition-colors shadow-sm"
+        >
+            <i class="fas fa-file-csv text-green-500"></i> Export CSV
+        </button>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">
+                User Growth Trend
+            </h3>
+            <div class="h-64 relative">
+                <canvas id="userGrowthChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Academic vs Kokurikulum Balance Chart -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-800">
+                    Academic vs Co-curricular Balance
+                </h3>
+                <!-- Info Icon with Tooltip -->
+                <div class="relative group">
+                    <button
+                        class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                        <i class="fas fa-info text-xs"></i>
+                    </button>
+                    <!-- Tooltip (Hidden by default, show on hover) -->
+                    <div
+                        class="absolute right-0 top-8 w-64 p-3 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+                    >
+                        <p class="text-xs font-semibold text-gray-700 mb-2">
+                            Category Guide:
+                        </p>
+                        <div class="space-y-1.5 text-xs">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-green-500">
+                                </div>
+                                <span class="text-gray-600"
+                                    ><b class="text-green-700">Balanced</b> — maintains
+                                    both</span
+                                >
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-blue-500">
+                                </div>
+                                <span class="text-gray-600"
+                                    ><b class="text-blue-700">Academic Focus</b> —
+                                    low co-curricular</span
+                                >
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-orange-500">
+                                </div>
+                                <span class="text-gray-600"
+                                    ><b class="text-orange-700"
+                                        >Co-curricular Focus</b
+                                    > — needs academic improvement</span
+                                >
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-gray-400">
+                                </div>
+                                <span class="text-gray-600"
+                                    ><b class="text-gray-700">Incomplete</b> — profile
+                                    not complete</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="h-64 relative">
+                <canvas id="balanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAK Statistics Section - NEW -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-gray-800">
+                <i class="fas fa-user-tie text-[#667eea] mr-2"></i>
+                Advisor (PAK) Statistics
+            </h3>
+            <select
+                id="pak-filter"
+                class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#667eea] bg-white text-gray-600"
+            >
+                <option value="">All Advisors</option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <div
+                        class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center"
+                    >
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Advisors</p>
+                        <p
+                            class="text-2xl font-bold text-gray-800"
+                            id="total-pak"
+                        >
+                            0
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <div
+                        class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center"
+                    >
+                        <i class="fas fa-user-check text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Supervised Students</p>
+                        <p
+                            class="text-2xl font-bold text-gray-800"
+                            id="supervised-students"
+                        >
+                            0
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <div
+                        class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center"
+                    >
+                        <i class="fas fa-chart-pie text-purple-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Average per Advisor</p>
+                        <p
+                            class="text-2xl font-bold text-gray-800"
+                            id="avg-per-pak"
+                        >
+                            0
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAK Distribution Chart -->
+        <div class="mt-6 flex justify-start">
+            <div class="h-48 w-80">
+                <canvas id="pakDistributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Analytics Tabs - NEW -->
+
+    <!-- ML Analysis Section -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-gray-800">
+                AI Student Risk Analysis
+            </h3>
+            <span
+                id="ml-health-badge"
+                class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500"
+            >
+                <i class="fas fa-circle-notch fa-spin"></i> Checking System...
+            </span>
+        </div>
+
+        <!-- Input Area -->
+        <div class="flex gap-4 mb-6">
+            <input
+                type="text"
+                id="student-ids-input"
+                placeholder="Enter Student IDs (comma separated, e.g., AI2001, CB2002)"
+                class="flex-1 border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#667eea]"
+            />
+            <button
+                id="analyze-btn"
+                class="bg-[#667eea] text-white px-6 py-2 rounded-lg hover:bg-[#5a6fd6] transition-colors flex items-center gap-2"
+            >
+                <i class="fas fa-magic"></i> Analyze
+            </button>
+        </div>
+
+        <div id="ml-results-area" class="hidden space-y-8">
+            <!-- Heatmap -->
+            <div>
+                <h4 class="text-sm font-semibold text-gray-600 mb-4">
+                    Performance Matrix: Academic vs Co-curricular
+                </h4>
+                <div
+                    class="h-80 relative border border-gray-100 rounded-xl p-4 bg-gray-50"
+                >
+                    <canvas id="riskHeatmapChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                                >Student ID</th
+                            >
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                                >Risk Level</th
+                            >
+
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                                >Top Factor</th
+                            >
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                                >Action</th
+                            >
+                        </tr>
+                    </thead>
+                    <tbody
+                        id="ml-results-body"
+                        class="divide-y divide-gray-100"
+                    >
+                        <!-- Results will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="ml-empty-state" class="text-center py-12 text-gray-400">
+            <i class="fas fa-robot text-4xl mb-3"></i>
+            <p>Enter student IDs and click Analyze to see AI predictions</p>
+        </div>
+    </div>
+
+    <!-- Action Plan Modal -->
+    <div
+        id="action-plan-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4"
+    >
+        <div
+            class="bg-white rounded-3xl max-w-3xl w-full mx-4 relative overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+        >
+            <!-- Header with gradient -->
+            <div
+                class="bg-gradient-to-r from-[#667eea] to-[#764ba2] p-6 relative"
+            >
+                <button
+                    id="close-modal-btn"
+                    class="absolute top-4 right-4 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200"
+                >
+                    <i class="fas fa-times text-white"></i>
+                </button>
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center"
+                    >
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">
+                            AI Intervention Plan
+                        </h3>
+                        <p class="text-white/80 text-sm" id="modal-student-id">
+                            Generating insights...
+                        </p>
+                    </div>
+                </div>
+                <!-- Decorative elements -->
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"
+                >
+                </div>
+                <div
+                    class="absolute bottom-0 left-20 w-20 h-20 bg-white/5 rounded-full translate-y-1/2"
+                >
+                </div>
+            </div>
+
+            <!-- Content area with scroll -->
+            <div
+                id="action-plan-content"
+                class="p-6 space-y-6 overflow-y-auto flex-1"
+            >
+                <!-- Loading state -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-center py-12">
+                        <div class="relative">
+                            <div
+                                class="w-16 h-16 border-4 border-[#667eea]/20 rounded-full"
+                            >
+                            </div>
+                            <div
+                                class="w-16 h-16 border-4 border-[#667eea] border-t-transparent rounded-full animate-spin absolute top-0 left-0"
+                            >
+                            </div>
+                            <i
+                                class="fas fa-sparkles text-[#667eea] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                            ></i>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-500 text-sm">
+                        AI is analyzing student data and generating personalized
+                        recommendations...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div
+                class="border-t border-gray-100 p-4 bg-gray-50/50 flex justify-between items-center"
+            >
+                <div class="flex items-center gap-2 text-xs text-gray-400">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Powered by Gemini AI</span>
+                </div>
+                <button
+                    id="modal-close-footer-btn"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Export Customization Modal -->
+    <div
+        id="export-pdf-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4"
+    >
+        <div
+            class="bg-white rounded-2xl max-w-md w-full mx-4 shadow-2xl overflow-hidden"
+        >
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-red-500 to-pink-600 p-6">
+                <h3
+                    class="text-xl font-bold text-white flex items-center gap-3"
+                >
+                    <i class="fas fa-file-pdf"></i>
+                    Export PDF Report
+                </h3>
+                <p class="text-white/80 text-sm mt-1">
+                    Customize your report data
+                </p>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 space-y-5">
+                <!-- Date Range -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-calendar-alt text-gray-400 mr-2"
+                        ></i>Date Range
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input
+                            type="date"
+                            id="export-date-from"
+                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                        />
+                        <input
+                            type="date"
+                            id="export-date-to"
+                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                        />
+                    </div>
+                </div>
+
+                <!-- Department Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-building text-gray-400 mr-2"
+                        ></i>Department
+                    </label>
+                    <select
+                        id="export-department"
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                    >
+                        <option value="">All Departments</option>
+                        <option value="FSKTM">FSKTM</option>
+                        <option value="FKAAB">FKAAB</option>
+                        <option value="FKEE">FKEE</option>
+                        <option value="FKMP">FKMP</option>
+                        <option value="FPTP">FPTP</option>
+                    </select>
+                </div>
+
+                <!-- Report Template -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-layer-group text-gray-400 mr-2"
+                        ></i>Report Template
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label
+                            class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors has-[:checked]:border-red-500 has-[:checked]:bg-red-50"
+                        >
+                            <input
+                                type="radio"
+                                name="export-template"
+                                value="summary"
+                                checked
+                                class="text-red-500"
+                            />
+                            <div>
+                                <div class="font-medium text-gray-800">
+                                    Summary
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    Key stats only
+                                </div>
+                            </div>
+                        </label>
+                        <label
+                            class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors has-[:checked]:border-red-500 has-[:checked]:bg-red-50"
+                        >
+                            <input
+                                type="radio"
+                                name="export-template"
+                                value="detailed"
+                                class="text-red-500"
+                            />
+                            <div>
+                                <div class="font-medium text-gray-800">
+                                    Detailed
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    Full report
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Include Sections -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-list-check text-gray-400 mr-2"
+                        ></i>Include Sections
+                    </label>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                id="export-inc-students"
+                                checked
+                                class="w-4 h-4 rounded text-red-500"
+                            />
+                            <span class="text-sm text-gray-600"
+                                >Student Statistics</span
+                            >
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                id="export-inc-events"
+                                checked
+                                class="w-4 h-4 rounded text-red-500"
+                            />
+                            <span class="text-sm text-gray-600"
+                                >Event Analytics</span
+                            >
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                id="export-inc-cgpa"
+                                checked
+                                class="w-4 h-4 rounded text-red-500"
+                            />
+                            <span class="text-sm text-gray-600"
+                                >CGPA Distribution</span
+                            >
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                id="export-inc-departments"
+                                checked
+                                class="w-4 h-4 rounded text-red-500"
+                            />
+                            <span class="text-sm text-gray-600"
+                                >Department Breakdown</span
+                            >
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div
+                class="border-t border-gray-100 p-4 bg-gray-50 flex justify-end gap-3"
+            >
+                <button
+                    id="close-export-modal-btn"
+                    class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
+                    id="confirm-export-btn"
+                    class="px-6 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-all font-medium flex items-center gap-2 shadow-lg shadow-red-500/30"
+                >
+                    <i class="fas fa-download"></i>
+                    Export PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</DashboardLayout>
+
+<script>
+    import Chart from "chart.js/auto";
+    import { jsPDF } from "jspdf";
+    import autoTable from "jspdf-autotable";
+    import { supabase } from "../../lib/supabase";
+    import { mlAnalyticsService } from "../../services/MLAnalyticsService";
+    import { geminiService } from "../../services/GeminiService";
+
+    let heatmapChart: any = null;
+    let balanceChart: any = null;
+    let pakChart: any = null;
+
+    let currentResults: any[] = [];
+    let userGrowthChart: any = null;
+
+    // Initialize Charts & Data
+    document.addEventListener("DOMContentLoaded", async () => {
+        await refreshDashboard();
+
+        // ML & Modal Listeners
+        checkMLSystem();
+        setupEventListeners();
+        setupModalHandlers();
+
+        // Setup Realtime Subscriptions
+        setupRealtimeSubscriptions();
+    });
+
+    // Refresh all dashboard data
+    async function refreshDashboard() {
+        const stats = await loadRealStats();
+        if (!stats) {
+            console.error("Failed to load statistics for dashboard");
+            return;
+        }
+
+        // Destroy existing charts before recreating
+        destroyCharts();
+
+        await initializeCharts(stats);
+        await updateQuickStats(stats);
+        await populateDepartmentTable(stats.departments);
+    }
+
+    // Destroy all chart instances
+    function destroyCharts() {
+        if (userGrowthChart) {
+            userGrowthChart.destroy();
+            userGrowthChart = null;
+        }
+        if (balanceChart) {
+            balanceChart.destroy();
+            balanceChart = null;
+        }
+
+        if (pakChart) {
+            pakChart.destroy();
+            pakChart = null;
+        }
+    }
+
+    // Setup Supabase Realtime subscriptions
+    function setupRealtimeSubscriptions() {
+        // Listen to users table changes
+        supabase
+            .channel("dashboard-users")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "users" },
+                () => {
+                    console.log("🔄 Users changed, refreshing...");
+                    refreshDashboard();
+                },
+            )
+            .subscribe();
+
+        // Listen to profiles table changes
+        supabase
+            .channel("dashboard-profiles")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "profiles" },
+                () => {
+                    console.log("🔄 Profiles changed, refreshing...");
+                    refreshDashboard();
+                },
+            )
+            .subscribe();
+
+        // Listen to events table changes
+        supabase
+            .channel("dashboard-events")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "events" },
+                () => {
+                    console.log("🔄 Events changed, refreshing...");
+                    refreshDashboard();
+                },
+            )
+            .subscribe();
+
+        // Listen to participations table changes
+        supabase
+            .channel("dashboard-participations")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "event_participations" },
+                () => {
+                    console.log("🔄 Participations changed, refreshing...");
+                    refreshDashboard();
+                },
+            )
+            .subscribe();
+
+        console.log("✅ Realtime subscriptions active");
+    }
+
+    async function loadRealStats() {
+        try {
+            const [
+                { data: users },
+                { data: allProfiles },
+                { data: events },
+                { data: participations },
+            ] = await Promise.all([
+                supabase
+                    .from("users")
+                    .select("id, created_at, department, role"),
+                supabase
+                    .from("profiles")
+                    .select(
+                        "academic_info, skills, personal_advisor, user_id, kokurikulum_score, cgpa",
+                    ),
+                supabase.from("events").select("*"),
+                supabase.from("event_participations").select("*"),
+            ]);
+
+            // Get student user IDs only
+            const studentIds = new Set(
+                users
+                    ?.filter((u: any) => u.role === "student")
+                    .map((u: any) => u.id) || [],
+            );
+
+            // Filter profiles to students only
+            const profiles =
+                allProfiles?.filter((p: any) => studentIds.has(p.user_id)) ||
+                [];
+
+            // Aggregations
+            const depts: any = {};
+            const months: any = {};
+            const skillsMap: any = {};
+            const paks: any = {};
+            let totalCgpa = 0;
+            let cgpaCount = 0;
+            let totalKoku = 0;
+            let kokuCount = 0;
+            let balancedCount = 0;
+
+            users?.forEach((u) => {
+                // Dept
+                const d = u.department || "Other";
+                depts[d] = (depts[d] || 0) + 1;
+
+                // Growth
+                const m = new Date(u.created_at).toLocaleString("default", {
+                    month: "short",
+                });
+                months[m] = (months[m] || 0) + 1;
+            });
+
+            profiles?.forEach((p) => {
+                // CGPA - read from p.cgpa directly (not academic_info)
+                const cgpa =
+                    parseFloat(p.cgpa) ||
+                    parseFloat(p.academic_info?.cgpa) ||
+                    0;
+                if (cgpa > 0) {
+                    totalCgpa += cgpa;
+                    cgpaCount++;
+                }
+                // Kokurikulum
+                const koku = parseFloat(p.kokurikulum_score) || 0;
+                if (koku > 0) {
+                    totalKoku += koku;
+                    kokuCount++;
+                }
+                // Check balanced (both data exists and within 15% diff)
+                if (cgpa > 0 && koku > 0) {
+                    const academicScore = (cgpa / 4.0) * 100;
+                    if (Math.abs(academicScore - koku) <= 15) {
+                        balancedCount++;
+                    }
+                }
+                // Skills
+                if (Array.isArray(p.skills)) {
+                    p.skills.forEach((s: string) => {
+                        skillsMap[s] = (skillsMap[s] || 0) + 1;
+                    });
+                }
+                // PAK
+                if (p.personal_advisor) {
+                    paks[p.personal_advisor] =
+                        (paks[p.personal_advisor] || 0) + 1;
+                }
+            });
+
+            return {
+                users: users || [],
+                profiles: profiles || [],
+                events: events || [],
+                participations: participations || [],
+                departments: depts,
+                growth: months,
+                skills: skillsMap,
+                paks: paks,
+                avgCgpa:
+                    cgpaCount > 0 ? (totalCgpa / cgpaCount).toFixed(2) : "0.00",
+                avgKoku:
+                    kokuCount > 0 ? (totalKoku / kokuCount).toFixed(0) : "0",
+                balancedCount: balancedCount,
+            };
+        } catch (e) {
+            console.error("Stats Load Failed:", e);
+            return null;
+        }
+    }
+
+    async function updateQuickStats(stats: any) {
+        if (!stats) return;
+
+        const totalStudentsEl = document.getElementById("total-students");
+        if (totalStudentsEl)
+            totalStudentsEl.textContent = stats.users
+                .filter((u: any) => u.role === "student")
+                .length.toString();
+
+        const avgCgpaEl = document.getElementById("avg-cgpa");
+        if (avgCgpaEl) avgCgpaEl.textContent = stats.avgCgpa;
+
+        const cgpaCountEl = document.getElementById("cgpa-count");
+        if (cgpaCountEl)
+            cgpaCountEl.textContent = stats.profiles.length.toString();
+
+        const activeEventsEl = document.getElementById("active-events");
+        if (activeEventsEl)
+            activeEventsEl.textContent = stats.events.length.toString();
+
+        const eventParticipationEl = document.getElementById(
+            "event-participation",
+        );
+        if (eventParticipationEl)
+            eventParticipationEl.textContent =
+                stats.participations.length.toString();
+
+        const totalPakEl = document.getElementById("total-pak");
+        if (totalPakEl)
+            totalPakEl.textContent = Object.keys(stats.paks).length.toString();
+
+        const supervisedStudentsEl = document.getElementById(
+            "supervised-students",
+        );
+        if (supervisedStudentsEl)
+            supervisedStudentsEl.textContent = stats.profiles.length.toString();
+
+        // Kokurikulum stats
+        const avgKokuEl = document.getElementById("avg-koku");
+        if (avgKokuEl) avgKokuEl.textContent = stats.avgKoku + "%";
+
+        const kokuBalancedEl = document.getElementById("koku-balanced");
+        if (kokuBalancedEl)
+            kokuBalancedEl.textContent = stats.balancedCount.toString();
+    }
+
+    async function initializeCharts(stats: any) {
+        if (!stats) return;
+
+        // User Growth
+        const growthLabels = ["Sep", "Oct", "Nov", "Dec"];
+        userGrowthChart = new Chart(
+            document.getElementById("userGrowthChart") as any,
+            {
+                type: "line",
+                data: {
+                    labels: growthLabels,
+                    datasets: [
+                        {
+                            label: "New Users",
+                            data: growthLabels.map((l) => stats.growth[l] || 0),
+                            borderColor: "#667eea",
+                            tension: 0.4,
+                            fill: true,
+                            backgroundColor: "rgba(102, 126, 234, 0.1)",
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: "rgba(0,0,0,0.05)" },
+                        },
+                        x: { grid: { display: false } },
+                    },
+                },
+            },
+        );
+
+        // PAK Chart
+        const pakCtx = document.getElementById(
+            "pakDistributionChart",
+        ) as HTMLCanvasElement;
+        if (pakCtx) {
+            pakChart = new Chart(pakCtx, {
+                type: "doughnut",
+                data: {
+                    labels: Object.keys(stats.paks),
+                    datasets: [
+                        {
+                            data: Object.values(stats.paks),
+                            backgroundColor: [
+                                "#667eea",
+                                "#764ba2",
+                                "#4facfe",
+                                "#22c55e",
+                            ],
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "right",
+                            labels: {
+                                boxWidth: 12,
+                                padding: 20,
+                                font: { size: 11 },
+                            },
+                        },
+                    },
+                    // Cutout makes it look like a nice ring, not a solid disk
+                    cutout: "70%",
+                },
+            });
+        }
+
+        // Balance Chart (Akademik vs Kokurikulum)
+        const balanceCtx = document.getElementById(
+            "balanceChart",
+        ) as HTMLCanvasElement;
+        if (balanceCtx) {
+            const categories: { [key: string]: number } = {
+                Seimbang: 0,
+                "Fokus Akademik": 0,
+                "Fokus Kokurikulum": 0,
+                "Data Tak Lengkap": 0,
+            };
+
+            stats.profiles.forEach((p: any) => {
+                // CGPA - read from p.cgpa directly (not academic_info)
+                const cgpa =
+                    parseFloat(p.cgpa) ||
+                    parseFloat(p.academic_info?.cgpa) ||
+                    0;
+                const koku = parseFloat(p.kokurikulum_score) || 0;
+
+                if (cgpa === 0 || koku === 0) {
+                    categories["Data Tak Lengkap"]++;
+                } else {
+                    const academicScore = (cgpa / 4.0) * 100;
+                    const diff = academicScore - koku;
+
+                    if (Math.abs(diff) <= 15) {
+                        categories["Seimbang"]++;
+                    } else if (diff > 15) {
+                        categories["Fokus Akademik"]++;
+                    } else {
+                        categories["Fokus Kokurikulum"]++;
+                    }
+                }
+            });
+
+            // Filter out zero values
+            const filteredLabels = Object.keys(categories).filter(
+                (k) => categories[k] > 0,
+            );
+            const filteredData = filteredLabels.map((k) => categories[k]);
+            const colorMap: { [key: string]: string } = {
+                Seimbang: "rgba(34, 197, 94, 0.85)",
+                "Fokus Akademik": "rgba(59, 130, 246, 0.85)",
+                "Fokus Kokurikulum": "rgba(249, 115, 22, 0.85)",
+                "Data Tak Lengkap": "rgba(156, 163, 175, 0.85)",
+            };
+
+            balanceChart = new Chart(balanceCtx, {
+                type: "doughnut",
+                data: {
+                    labels: filteredLabels,
+                    datasets: [
+                        {
+                            data: filteredData,
+                            backgroundColor: filteredLabels.map(
+                                (l) => colorMap[l],
+                            ),
+                            borderWidth: 2,
+                            borderColor: "#fff",
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: { size: 11 },
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx: any) => {
+                                    const total = ctx.dataset.data.reduce(
+                                        (a: number, b: number) => a + b,
+                                        0,
+                                    );
+                                    const pct = (
+                                        (ctx.raw / total) *
+                                        100
+                                    ).toFixed(1);
+                                    return `${ctx.label}: ${ctx.raw} pelajar (${pct}%)`;
+                                },
+                            },
+                        },
+                    },
+                    cutout: "55%",
+                },
+            });
+        }
+    }
+
+    async function populateDepartmentTable(depts: any) {
+        const tbody = document.querySelector("tbody.divide-y");
+        if (!tbody || !depts) return;
+
+        const total = Object.values(depts).reduce(
+            (a: any, b: any) => a + b,
+            0,
+        ) as number;
+
+        tbody.innerHTML = Object.entries(depts)
+            .map(
+                ([name, count]: [any, any]) => `
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${name}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">UTHM</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${count}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                        <div class="w-16 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-[#667eea]" style="width: ${((count / total) * 100).toFixed(0)}%"></div>
+                        </div>
+                        <span class="text-xs text-gray-500">${((count / total) * 100).toFixed(1)}%</span>
+                    </div>
+                </td>
+            </tr>
+        `,
+            )
+            .join("");
+    }
+
+    function setupEventListeners() {
+        // Open export modal instead of direct generate
+        document
+            .getElementById("generate-report-btn")
+            ?.addEventListener("click", openExportModal);
+        document
+            .getElementById("export-csv-btn")
+            ?.addEventListener("click", exportToCSV);
+        document
+            .getElementById("close-modal-btn")
+            ?.addEventListener("click", closeModal);
+        document
+            .getElementById("modal-close-footer-btn")
+            ?.addEventListener("click", closeModal);
+
+        // Export modal handlers
+        document
+            .getElementById("close-export-modal-btn")
+            ?.addEventListener("click", closeExportModal);
+        document
+            .getElementById("confirm-export-btn")
+            ?.addEventListener("click", generateReport);
+
+        // Initialize tabs
+        initializeTabs();
+    }
+
+    function openExportModal() {
+        const modal = document.getElementById("export-pdf-modal");
+        // Set default dates
+        const today = new Date();
+        const thirtyDaysAgo = new Date(
+            today.getTime() - 30 * 24 * 60 * 60 * 1000,
+        );
+
+        const dateFrom = document.getElementById(
+            "export-date-from",
+        ) as HTMLInputElement;
+        const dateTo = document.getElementById(
+            "export-date-to",
+        ) as HTMLInputElement;
+
+        if (dateFrom)
+            dateFrom.value = thirtyDaysAgo.toISOString().split("T")[0];
+        if (dateTo) dateTo.value = today.toISOString().split("T")[0];
+
+        modal?.classList.remove("hidden");
+        modal?.classList.add("flex");
+    }
+
+    function closeExportModal() {
+        const modal = document.getElementById("export-pdf-modal");
+        modal?.classList.add("hidden");
+        modal?.classList.remove("flex");
+    }
+
+    function initializeTabs() {
+        const tabs = document.querySelectorAll(".analytics-tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", () => {
+                const targetTab = tab.getAttribute("data-tab");
+
+                // Remove active styles from all tabs
+                tabs.forEach((t) => {
+                    t.classList.remove(
+                        "active",
+                        "border-[#667eea]",
+                        "text-[#667eea]",
+                    );
+                    t.classList.add("border-transparent", "text-gray-500");
+                });
+
+                // Add active styles to clicked tab
+                tab.classList.add(
+                    "active",
+                    "border-[#667eea]",
+                    "text-[#667eea]",
+                );
+                tab.classList.remove("border-transparent", "text-gray-500");
+
+                // Hide all tab contents
+                tabContents.forEach((content) => {
+                    content.classList.add("hidden");
+                });
+
+                // Show target tab content
+                const targetContent = document.getElementById(
+                    `tab-${targetTab}`,
+                );
+                if (targetContent) {
+                    targetContent.classList.remove("hidden");
+                }
+            });
+        });
+    }
+
+    function closeModal() {
+        const m = document.getElementById("action-plan-modal");
+        m?.classList.add("hidden");
+        m?.classList.remove("flex");
+    }
+
+    // AI Plan Generation
+    async function generatePlan(studentId: string) {
+        const studentData = currentResults.find(
+            (r) => r.student_id === studentId,
+        );
+        if (!studentData) return;
+
+        const modal = document.getElementById("action-plan-modal");
+        const content = document.getElementById("action-plan-content");
+        const titleId = document.getElementById("modal-student-id");
+
+        if (modal && content && titleId) {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            titleId.innerText = `Analyzing ${studentId}...`;
+
+            // Better loading state
+            content.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-center py-12">
+                    <div class="relative">
+                        <div class="w-16 h-16 border-4 border-[#667eea]/20 rounded-full"></div>
+                        <div class="w-16 h-16 border-4 border-[#667eea] border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+                        <i class="fas fa-sparkles text-[#667eea] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i>
+                    </div>
+                </div>
+                <p class="text-center text-gray-500 text-sm">AI is analyzing student data and generating personalized recommendations...</p>
+            </div>`;
+
+            const result = await geminiService.generateActionPlan(studentData);
+
+            if (result.success && result.plan) {
+                titleId.innerText = `Student ${studentId}`;
+
+                // Get risk level styling
+                const riskLevel =
+                    studentData.risk_level?.toLowerCase() || "medium";
+                const riskConfig = {
+                    high: {
+                        bg: "bg-red-50",
+                        border: "border-red-200",
+                        text: "text-red-700",
+                        icon: "fa-exclamation-triangle",
+                        label: "High Risk",
+                    },
+                    medium: {
+                        bg: "bg-amber-50",
+                        border: "border-amber-200",
+                        text: "text-amber-700",
+                        icon: "fa-exclamation-circle",
+                        label: "Medium Risk",
+                    },
+                    low: {
+                        bg: "bg-green-50",
+                        border: "border-green-200",
+                        text: "text-green-700",
+                        icon: "fa-check-circle",
+                        label: "Low Risk",
+                    },
+                };
+                const risk =
+                    riskConfig[riskLevel as keyof typeof riskConfig] ||
+                    riskConfig.medium;
+
+                content.innerHTML = `
+                <!-- Risk Overview Card -->
+                <div class="${risk.bg} ${risk.border} border rounded-2xl p-5">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 ${risk.bg} rounded-xl flex items-center justify-center border ${risk.border}">
+                            <i class="fas ${risk.icon} ${risk.text} text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${risk.bg} ${risk.text} border ${risk.border}">
+                                ${risk.label}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <span class="font-medium text-gray-700">Primary Factor:</span> ${studentData.top_factor || "Multiple factors identified"}
+                    </div>
+                </div>
+
+                <!-- Intervention Strategy -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-100">
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-lightbulb text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Intervention Strategy</h4>
+                            <p class="text-xs text-blue-600">AI-Generated Recommendation</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 text-sm leading-relaxed pl-13">${result.plan.interventionPlan}</p>
+                </div>
+
+                <!-- Recommended Actions -->
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-tasks text-[#667eea]"></i>
+                        <h4 class="font-bold text-gray-800">Recommended Actions</h4>
+                    </div>
+                    <div class="space-y-3">
+                        ${result.plan.recommendations
+                            .map(
+                                (rec: string, index: number) => `
+                            <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group">
+                                <div class="w-8 h-8 bg-[#667eea]/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#667eea]/20 transition-colors">
+                                    <span class="text-[#667eea] font-bold text-sm">${index + 1}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-gray-700 text-sm leading-relaxed">${rec}</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-300 group-hover:text-[#667eea] transition-colors mt-1"></i>
+                            </div>
+                        `,
+                            )
+                            .join("")}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3 pt-2">
+                    <button class="flex-1 px-4 py-3 bg-[#667eea] text-white rounded-xl hover:bg-[#5a6fd6] transition-colors flex items-center justify-center gap-2 font-medium">
+                        <i class="fas fa-calendar-plus"></i>
+                        Schedule Intervention
+                    </button>
+                    <button class="px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </button>
+                </div>
+            `;
+            } else {
+                content.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-2">Generation Failed</h4>
+                    <p class="text-gray-500 text-sm mb-6">${result.error || "Unable to generate action plan. Please try again."}</p>
+                    <button onclick="generatePlan('${studentId}')" class="px-6 py-2 bg-[#667eea] text-white rounded-lg hover:bg-[#5a6fd6] transition-colors text-sm font-medium">
+                        <i class="fas fa-redo mr-2"></i>Try Again
+                    </button>
+                </div>
+            `;
+            }
+        }
+    }
+
+    // Export Functions
+    async function generateReport() {
+        const confirmBtn = document.getElementById("confirm-export-btn");
+        const mainBtn = document.getElementById("generate-report-btn");
+
+        if (confirmBtn) {
+            confirmBtn.innerHTML =
+                '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            (confirmBtn as HTMLButtonElement).disabled = true;
+        }
+
+        try {
+            // Get filter values from modal
+            const dateFrom = (
+                document.getElementById("export-date-from") as HTMLInputElement
+            )?.value;
+            const dateTo = (
+                document.getElementById("export-date-to") as HTMLInputElement
+            )?.value;
+            const department = (
+                document.getElementById(
+                    "export-department",
+                ) as HTMLSelectElement
+            )?.value;
+            const template =
+                (
+                    document.querySelector(
+                        'input[name="export-template"]:checked',
+                    ) as HTMLInputElement
+                )?.value || "summary";
+
+            const includeStudents = (
+                document.getElementById(
+                    "export-inc-students",
+                ) as HTMLInputElement
+            )?.checked;
+            const includeEvents = (
+                document.getElementById("export-inc-events") as HTMLInputElement
+            )?.checked;
+            const includeCgpa = (
+                document.getElementById("export-inc-cgpa") as HTMLInputElement
+            )?.checked;
+            const includeDepartments = (
+                document.getElementById(
+                    "export-inc-departments",
+                ) as HTMLInputElement
+            )?.checked;
+
+            // Fetch Data with filters
+            let usersQuery = supabase.from("users").select("*");
+            let eventsQuery = supabase.from("events").select("*");
+            let profilesQuery = supabase.from("profiles").select("*");
+
+            // Apply date filters
+            if (dateFrom) {
+                usersQuery = usersQuery.gte("created_at", dateFrom);
+                eventsQuery = eventsQuery.gte("event_date", dateFrom);
+            }
+            if (dateTo) {
+                usersQuery = usersQuery.lte("created_at", dateTo + "T23:59:59");
+                eventsQuery = eventsQuery.lte(
+                    "event_date",
+                    dateTo + "T23:59:59",
+                );
+            }
+
+            // Apply department filter
+            if (department) {
+                profilesQuery = profilesQuery.ilike(
+                    "department",
+                    `%${department}%`,
+                );
+            }
+
+            const [{ data: users }, { data: events }, { data: profiles }] =
+                await Promise.all([usersQuery, eventsQuery, profilesQuery]);
+
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(102, 126, 234);
+            doc.text("UTHM Talent Analytics Report", 105, 20, {
+                align: "center",
+            });
+
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text(
+                `Generated: ${new Date().toLocaleString("en-MY")} | Template: ${template.toUpperCase()}`,
+                105,
+                28,
+                { align: "center" },
+            );
+
+            // Filter info
+            doc.setFontSize(9);
+            doc.setTextColor(120, 120, 120);
+            let filterText = `Filters: ${dateFrom || "All dates"} to ${dateTo || "Present"}`;
+            if (department) filterText += ` | Dept: ${department}`;
+            doc.text(filterText, 105, 34, { align: "center" });
+
+            let y = 50;
+
+            // Summary Section (always included)
+            doc.setFontSize(14);
+            doc.setTextColor(44, 62, 80);
+            doc.text("Executive Summary", 20, y);
+
+            doc.setFontSize(10);
+            doc.setTextColor(52, 73, 94);
+            y += 10;
+
+            const studentCount =
+                users?.filter((u) => u.role === "student").length || 0;
+            const lecturerCount =
+                users?.filter((u) => u.role === "lecturer").length || 0;
+
+            doc.text(`• Total Users: ${users?.length || 0}`, 25, y);
+            y += 6;
+            doc.text(`• Students: ${studentCount}`, 25, y);
+            y += 6;
+            doc.text(`• Lecturers: ${lecturerCount}`, 25, y);
+            y += 6;
+            doc.text(`• Total Events: ${events?.length || 0}`, 25, y);
+            y += 10;
+
+            // Student Statistics Section
+            if (includeStudents && template === "detailed") {
+                doc.setFontSize(14);
+                doc.setTextColor(44, 62, 80);
+                doc.text("Student Statistics", 20, y);
+                y += 8;
+
+                doc.setFontSize(10);
+                doc.setTextColor(52, 73, 94);
+
+                // Calculate average CGPA
+                const cgpaValues =
+                    profiles
+                        ?.filter((p) => p.cgpa && parseFloat(p.cgpa) > 0)
+                        .map((p) => parseFloat(p.cgpa)) || [];
+                const avgCgpa =
+                    cgpaValues.length > 0
+                        ? (
+                              cgpaValues.reduce((a, b) => a + b, 0) /
+                              cgpaValues.length
+                          ).toFixed(2)
+                        : "N/A";
+
+                doc.text(`• Average CGPA: ${avgCgpa}`, 25, y);
+                y += 6;
+                doc.text(`• Profiles with CGPA: ${cgpaValues.length}`, 25, y);
+                y += 10;
+            }
+
+            // Events Section
+            if (includeEvents) {
+                doc.setFontSize(14);
+                doc.setTextColor(44, 62, 80);
+                doc.text("Event Analytics", 20, y);
+                y += 8;
+
+                if (events && events.length > 0 && template === "detailed") {
+                    const eventData = events
+                        .slice(0, 10)
+                        .map((e) => [
+                            e.title?.substring(0, 30) || "Untitled",
+                            new Date(e.event_date).toLocaleDateString("en-MY"),
+                            e.category || "General",
+                            e.current_participants?.toString() || "0",
+                        ]);
+
+                    autoTable(doc, {
+                        startY: y,
+                        head: [["Event", "Date", "Category", "Participants"]],
+                        body: eventData,
+                        theme: "striped",
+                        headStyles: { fillColor: [102, 126, 234] },
+                        styles: { fontSize: 8 },
+                    });
+
+                    y = (doc as any).lastAutoTable.finalY + 10;
+                } else {
+                    doc.setFontSize(10);
+                    doc.text(
+                        `• Events in period: ${events?.length || 0}`,
+                        25,
+                        y,
+                    );
+                    y += 10;
+                }
+            }
+
+            // CGPA Distribution Section
+            if (includeCgpa) {
+                doc.setFontSize(14);
+                doc.setTextColor(44, 62, 80);
+                doc.text("CGPA Distribution", 20, y);
+                y += 8;
+
+                const cgpaDist: Record<string, number> = {
+                    "Excellent (3.5-4.0)": 0,
+                    "Good (3.0-3.49)": 0,
+                    "Average (2.5-2.99)": 0,
+                    "Pass (2.0-2.49)": 0,
+                    "Below (<2.0)": 0,
+                };
+
+                profiles?.forEach((p) => {
+                    const cgpa = parseFloat(p.cgpa) || 0;
+                    if (cgpa >= 3.5) cgpaDist["Excellent (3.5-4.0)"]++;
+                    else if (cgpa >= 3.0) cgpaDist["Good (3.0-3.49)"]++;
+                    else if (cgpa >= 2.5) cgpaDist["Average (2.5-2.99)"]++;
+                    else if (cgpa >= 2.0) cgpaDist["Pass (2.0-2.49)"]++;
+                    else if (cgpa > 0) cgpaDist["Below (<2.0)"]++;
+                });
+
+                const cgpaData = Object.entries(cgpaDist)
+                    .filter(([_, count]) => count > 0)
+                    .map(([range, count]) => [range, count.toString()]);
+
+                if (cgpaData.length > 0) {
+                    autoTable(doc, {
+                        startY: y,
+                        head: [["CGPA Range", "Count"]],
+                        body: cgpaData,
+                        theme: "grid",
+                        headStyles: { fillColor: [34, 197, 94] },
+                        styles: { fontSize: 9 },
+                    });
+                    y = (doc as any).lastAutoTable.finalY + 10;
+                }
+            }
+
+            // Department Breakdown Section
+            if (includeDepartments) {
+                doc.setFontSize(14);
+                doc.setTextColor(44, 62, 80);
+                doc.text("Department Breakdown", 20, y);
+                y += 8;
+
+                const deptCounts: Record<string, number> = {};
+                profiles?.forEach((p) => {
+                    const dept = p.department || "Unknown";
+                    deptCounts[dept] = (deptCounts[dept] || 0) + 1;
+                });
+
+                const deptData = Object.entries(deptCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([dept, count]) => [dept, count.toString()]);
+
+                if (deptData.length > 0) {
+                    autoTable(doc, {
+                        startY: y,
+                        head: [["Department", "Student Count"]],
+                        body: deptData,
+                        theme: "grid",
+                        headStyles: { fillColor: [102, 126, 234] },
+                        styles: { fontSize: 9 },
+                    });
+                }
+            }
+
+            // Close modal and save
+            closeExportModal();
+
+            const filename = `uthm-report-${template}-${new Date().toISOString().split("T")[0]}.pdf`;
+            doc.save(filename);
+            alert(`✅ PDF Report "${filename}" generated successfully!`);
+        } catch (error: any) {
+            console.error("Error generating report:", error);
+            alert("Error generating report: " + error.message);
+        } finally {
+            if (confirmBtn) {
+                confirmBtn.innerHTML =
+                    '<i class="fas fa-download"></i> Export PDF';
+                (confirmBtn as HTMLButtonElement).disabled = false;
+            }
+            if (mainBtn) {
+                mainBtn.innerHTML =
+                    '<i class="fas fa-file-pdf text-red-500"></i> Generate Report';
+            }
+        }
+    }
+
+    async function exportToCSV() {
+        const btn = document.getElementById("export-csv-btn");
+        if (btn) {
+            btn.innerHTML =
+                '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+            (btn as HTMLButtonElement).disabled = true;
+        }
+
+        try {
+            const { data: users, error } = await supabase
+                .from("users")
+                .select("*");
+
+            if (error) throw error;
+            if (!users || users.length === 0) {
+                alert("No data to export");
+                return;
+            }
+
+            // Prepare CSV Data
+            const headers = [
+                "ID",
+                "Name",
+                "Email",
+                "Role",
+                "Department",
+                "Created At",
+            ];
+            const rows = users.map((u) => [
+                u.id,
+                u.name || u.full_name || "",
+                u.email,
+                u.role,
+                u.department || "",
+                u.created_at,
+            ]);
+
+            const csvContent = [
+                headers.join(","),
+                ...rows.map((row) =>
+                    row
+                        .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+                        .join(","),
+                ),
+            ].join("\n");
+
+            const blob = new Blob([csvContent], {
+                type: "text/csv;charset=utf-8;",
+            });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute(
+                "download",
+                `uthm-users-export-${new Date().toISOString().split("T")[0]}.csv`,
+            );
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error: any) {
+            console.error("Error exporting CSV:", error);
+            alert("Error exporting CSV: " + error.message);
+        } finally {
+            if (btn) {
+                btn.innerHTML =
+                    '<i class="fas fa-file-csv text-green-500"></i> Export CSV';
+                (btn as HTMLButtonElement).disabled = false;
+            }
+        }
+    }
+
+    // ML Logic
+    async function checkMLSystem() {
+        const badge = document.getElementById("ml-health-badge");
+        if (!badge) return;
+
+        const health = await mlAnalyticsService.checkHealth();
+        if (health.success) {
+            badge.innerHTML = `<i class="fas fa-check-circle text-green-500"></i> System Online (${health.model})`;
+            badge.classList.remove("bg-gray-100", "text-gray-500");
+            badge.classList.add("bg-green-50", "text-green-700");
+        } else {
+            badge.innerHTML = `<i class="fas fa-exclamation-circle text-red-500"></i> System Offline`;
+            badge.classList.remove("bg-gray-100", "text-gray-500");
+            badge.classList.add("bg-red-50", "text-red-700");
+        }
+    }
+
+    const analyzeBtn = document.getElementById("analyze-btn");
+    analyzeBtn?.addEventListener("click", async () => {
+        const input = document.getElementById(
+            "student-ids-input",
+        ) as HTMLInputElement;
+        const ids = input.value
+            .split(",")
+            .map((id) => id.trim())
+            .filter((id) => id);
+
+        if (ids.length === 0) {
+            alert("Please enter at least one student ID");
+            return;
+        }
+
+        // Show loading state
+        analyzeBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        analyzeBtn.setAttribute("disabled", "true");
+
+        const result = await mlAnalyticsService.batchPredict(ids);
+
+        // Show results area
+        if (result.success && result.data) {
+            displayResults(result.data.results);
+            updateHeatmap(result.data.results);
+        } else {
+            alert("Analysis failed: " + result.error);
+        }
+
+        // Reset button
+        analyzeBtn.innerHTML = '<i class="fas fa-magic"></i> Analyze';
+        analyzeBtn.removeAttribute("disabled");
+    });
+
+    function updateHeatmap(results: any[]) {
+        const ctx = document.getElementById(
+            "riskHeatmapChart",
+        ) as HTMLCanvasElement;
+        if (!ctx) return;
+
+        if (heatmapChart) {
+            heatmapChart.destroy();
+        }
+
+        const dataPoints = results.map((r) => ({
+            x: r.kokurikulum_score, // X-axis: Kokurikulum Score
+            y: r.current_cgpa, // Y-axis: CGPA
+            r: 8, // Radius
+            student_id: r.display_id || r.student_id, // Use display_id if available
+            risk_level: r.risk_level,
+        }));
+
+        heatmapChart = new Chart(ctx, {
+            type: "bubble",
+            data: {
+                datasets: [
+                    {
+                        label: "Student Risk Profile",
+                        data: dataPoints,
+                        backgroundColor: (context) => {
+                            const raw = context.raw as any;
+                            if (!raw) return "#ccc";
+                            if (raw.risk_level === "HIGH")
+                                return "rgba(239, 68, 68, 0.7)"; // Red
+                            if (raw.risk_level === "MEDIUM")
+                                return "rgba(234, 179, 8, 0.7)"; // Yellow
+                            return "rgba(34, 197, 94, 0.7)"; // Green
+                        },
+                        borderColor: (context) => {
+                            const raw = context.raw as any;
+                            if (!raw) return "#ccc";
+                            if (raw.risk_level === "HIGH")
+                                return "rgb(239, 68, 68)";
+                            if (raw.risk_level === "MEDIUM")
+                                return "rgb(234, 179, 8)";
+                            return "rgb(34, 197, 94)";
+                        },
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const raw = context.raw as any;
+                                return `${raw.student_id}: CGPA ${raw.y}, Koku ${raw.x}%`;
+                            },
+                        },
+                    },
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: "Analysis: Academic Performance (CGPA) vs Co-curricular Activity",
+                    },
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: "Kokurikulum Score (%)" },
+                        min: 0,
+                        max: 100,
+                    },
+                    y: {
+                        title: { display: true, text: "CGPA" },
+                        min: 0,
+                        max: 4.0,
+                    },
+                },
+            },
+        });
+    }
+
+    function displayResults(results: any[]) {
+        currentResults = results; // Store for AI generation
+        const resultsArea = document.getElementById("ml-results-area");
+        const emptyState = document.getElementById("ml-empty-state");
+        const tbody = document.getElementById("ml-results-body");
+
+        if (!resultsArea || !emptyState || !tbody) return;
+
+        resultsArea.classList.remove("hidden");
+        emptyState.classList.add("hidden");
+        tbody.innerHTML = "";
+
+        // Update Counts
+        const countHigh = document.getElementById("count-high");
+        const countMedium = document.getElementById("count-medium");
+        const countLow = document.getElementById("count-low");
+
+        if (countHigh)
+            countHigh.innerText = results
+                .filter((r) => r.risk_level === "HIGH")
+                .length.toString();
+        if (countMedium)
+            countMedium.innerText = results
+                .filter((r) => r.risk_level === "MEDIUM")
+                .length.toString();
+        if (countLow)
+            countLow.innerText = results
+                .filter((r) => r.risk_level === "LOW")
+                .length.toString();
+
+        results.forEach((r) => {
+            const format = mlAnalyticsService.formatRiskScore(r.risk_score);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${r.display_id || r.student_id}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${format.bgClass}">
+                        ${format.icon} ${r.risk_level}
+                    </span>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${r.risk_factors[0] || "None"}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="text-[#667eea] hover:text-[#5a6fd6] flex items-center gap-1 generate-plan-btn" 
+                        data-student-id="${r.student_id}"
+                        data-risk-context='${JSON.stringify({
+                            student_id: r.student_id,
+                            risk_level: r.risk_level,
+                            risk_score: r.risk_score,
+                            risk_factors: r.risk_factors || [],
+                            confidence: r.confidence,
+                            current_cgpa: r.current_cgpa, // Ensure this is available in results
+                            kokurikulum_score: r.kokurikulum_score, // Ensure this is available
+                        }).replace(/'/g, "&apos;")}'
+                    >
+                        <i class="fas fa-magic"></i> AI Plan
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // ======== NEW DETAILED ANALYTICS FUNCTIONS ========
+
+    async function loadDetailedAnalytics() {
+        try {
+            // Fetch all data from Supabase
+            const [usersResult, profilesResult, eventsResult] =
+                await Promise.all([
+                    supabase.from("users").select("*"),
+                    supabase.from("profiles").select("*"),
+                    supabase.from("events").select("*"),
+                ]);
+
+            const users = usersResult.data || [];
+            const profiles = profilesResult.data || [];
+            const events = eventsResult.data || [];
+
+            // Calculate stats
+            const students = users.filter((u) => u.role === "student");
+            const totalStudents = students.length;
+
+            // Update quick stats
+            updateElement("total-students", totalStudents.toString());
+
+            // Count new students this week
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const newStudents = students.filter(
+                (s) => new Date(s.created_at) > oneWeekAgo,
+            ).length;
+            updateElement("new-students-week", newStudents.toString());
+
+            // Calculate average CGPA
+            const cgpaValues = profiles
+                .filter((p) => p.academic_info?.cgpa)
+                .map((p) => parseFloat(p.academic_info.cgpa) || 0);
+            const avgCgpa =
+                cgpaValues.length > 0
+                    ? (
+                          cgpaValues.reduce((a, b) => a + b, 0) /
+                          cgpaValues.length
+                      ).toFixed(2)
+                    : "0.00";
+            updateElement("avg-cgpa", avgCgpa);
+            updateElement("cgpa-count", cgpaValues.length.toString());
+
+            // Calculate kokurikulum stats
+            const kokuValues = profiles
+                .filter((p) => p.kokurikulum_score != null)
+                .map((p) => p.kokurikulum_score || 0);
+            const avgKoku =
+                kokuValues.length > 0
+                    ? Math.round(
+                          kokuValues.reduce((a, b) => a + b, 0) /
+                              kokuValues.length,
+                      )
+                    : 0;
+            updateElement("avg-koku", `${avgKoku}%`);
+
+            // Count balanced students (those with good academic and koku balance)
+            const balancedStudents = profiles.filter((p) => {
+                const cgpa = parseFloat(p.academic_info?.cgpa) || 0;
+                const koku = p.kokurikulum_score || 0;
+                const academicScore = (cgpa / 4.0) * 100;
+                return Math.abs(academicScore - koku) <= 15;
+            }).length;
+            updateElement("koku-balanced", balancedStudents.toString());
+
+            // Active events
+            const now = new Date();
+            const activeEvents = events.filter(
+                (e) => new Date(e.end_date) > now,
+            ).length;
+            updateElement("active-events", activeEvents.toString());
+
+            // PAK Statistics
+            await loadPAKStatistics(profiles, users);
+
+            // Load charts
+            loadBalanceChart(profiles);
+        } catch (error) {
+            console.error("Error loading detailed analytics:", error);
+        }
+    }
+
+    async function loadPAKStatistics(profiles: any[], users: any[]) {
+        // Get unique PAKs
+        const pakMap = new Map<string, number>();
+
+        profiles.forEach((p) => {
+            const pak = p.personal_advisor || p.academic_info?.personalAdvisor;
+            if (pak) {
+                pakMap.set(pak, (pakMap.get(pak) || 0) + 1);
+            }
+        });
+
+        const totalPak = pakMap.size;
+        const supervisedStudents = Array.from(pakMap.values()).reduce(
+            (a, b) => a + b,
+            0,
+        );
+        const avgPerPak =
+            totalPak > 0 ? Math.round(supervisedStudents / totalPak) : 0;
+
+        updateElement("total-pak", totalPak.toString());
+        updateElement("supervised-students", supervisedStudents.toString());
+        updateElement("avg-per-pak", avgPerPak.toString());
+
+        // Populate PAK filter dropdown
+        const pakFilter = document.getElementById(
+            "pak-filter",
+        ) as HTMLSelectElement;
+        if (pakFilter) {
+            pakMap.forEach((count, pak) => {
+                const option = document.createElement("option");
+                option.value = pak;
+                option.textContent = `${pak} (${count})`;
+                pakFilter.appendChild(option);
+            });
+        }
+
+        // Load PAK distribution chart
+        loadPAKChart(pakMap);
+    }
+
+    function loadPAKChart(pakMap: Map<string, number>) {
+        const ctx = document.getElementById(
+            "pakDistributionChart",
+        ) as HTMLCanvasElement;
+        if (!ctx) return;
+
+        if (pakChart) pakChart.destroy();
+
+        const topPaks = Array.from(pakMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+
+        pakChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: topPaks.map((p) =>
+                    p[0].split(" ").slice(0, 2).join(" "),
+                ),
+                datasets: [
+                    {
+                        label: "Jumlah Pelajar",
+                        data: topPaks.map((p) => p[1]),
+                        backgroundColor: "rgba(102, 126, 234, 0.7)",
+                        borderColor: "rgb(102, 126, 234)",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: "y",
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: "Top 10 PAK Mengikut Bilangan Pelajar",
+                    },
+                },
+                scales: {
+                    x: { beginAtZero: true },
+                },
+            },
+        });
+    }
+
+    function loadBalanceChart(profiles: any[]) {
+        const ctx = document.getElementById(
+            "balanceChart",
+        ) as HTMLCanvasElement;
+        if (!ctx) return;
+
+        if (balanceChart) balanceChart.destroy();
+
+        // Count students by balance category
+        const categories = {
+            Seimbang: 0,
+            "Fokus Akademik": 0,
+            "Fokus Kokurikulum": 0,
+            "Tiada Data": 0,
+        };
+
+        profiles.forEach((p) => {
+            const cgpa = parseFloat(p.academic_info?.cgpa) || 0;
+            const koku = p.kokurikulum_score || 0;
+
+            if (!cgpa && !koku) {
+                categories["Tiada Data"]++;
+            } else {
+                const academicScore = (cgpa / 4.0) * 100;
+                const diff = academicScore - koku;
+
+                if (Math.abs(diff) <= 10) {
+                    categories["Seimbang"]++;
+                } else if (diff > 10) {
+                    categories["Fokus Akademik"]++;
+                } else {
+                    categories["Fokus Kokurikulum"]++;
+                }
+            }
+        });
+
+        balanceChart = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: Object.keys(categories),
+                datasets: [
+                    {
+                        data: Object.values(categories),
+                        backgroundColor: [
+                            "rgba(34, 197, 94, 0.8)",
+                            "rgba(59, 130, 246, 0.8)",
+                            "rgba(249, 115, 22, 0.8)",
+                            "rgba(156, 163, 175, 0.8)",
+                        ],
+                        borderWidth: 0,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                    },
+                },
+            },
+        });
+    }
+
+    function updateElement(id: string, value: string) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value;
+    }
+
+    function updateProgressBar(id: string, value: number) {
+        const el = document.getElementById(id) as HTMLElement;
+        if (el) el.style.width = `${Math.min(value, 100)}%`;
+    }
+
+    // AI Plan Modal Logic - Initialize after DOM is ready
+    function setupModalHandlers() {
+        const planModal = document.getElementById("action-plan-modal");
+        const closeModalBtn = document.getElementById("close-modal-btn");
+        const planContent = document.getElementById("action-plan-content");
+        const modalStudentId = document.getElementById("modal-student-id");
+
+        // Close Modal
+        closeModalBtn?.addEventListener("click", () => {
+            planModal?.classList.add("hidden");
+            planModal?.classList.remove("flex");
+        });
+
+        // Close on click outside
+        planModal?.addEventListener("click", (e) => {
+            if (e.target === planModal) {
+                planModal?.classList.add("hidden");
+                planModal?.classList.remove("flex");
+            }
+        });
+
+        // Delegate click for Generate Plan button
+        document
+            .getElementById("ml-results-body")
+            ?.addEventListener("click", async (e) => {
+                const target = (e.target as HTMLElement).closest(
+                    ".generate-plan-btn",
+                );
+                if (!target) return;
+
+                const btn = target as HTMLButtonElement;
+                const studentId = btn.dataset.studentId;
+                const riskContextStr = btn.dataset.riskContext;
+                let riskContext = {};
+
+                try {
+                    if (riskContextStr) {
+                        riskContext = JSON.parse(
+                            riskContextStr.replace(/&apos;/g, "'"),
+                        );
+                    }
+                } catch (e) {
+                    console.warn("Failed to parse risk context", e);
+                }
+
+                if (!studentId || !planModal || !planContent || !modalStudentId)
+                    return;
+
+                // Open Modal
+                planModal.classList.remove("hidden");
+                planModal.classList.add("flex");
+                modalStudentId.textContent = `Generating plan for ${studentId}...`;
+
+                // Show Loading State
+                planContent.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-12 space-y-4">
+                <i class="fas fa-brain fa-spin text-4xl text-[#667eea]"></i>
+                <p class="text-gray-500 font-medium">Analyzing student profile...</p>
+            </div>
+        `;
+
+                // Generate Plan
+                const result =
+                    await mlAnalyticsService.generateInterventionPlan(
+                        studentId,
+                        riskContext,
+                    );
+
+                if (result.success && result.plan) {
+                    modalStudentId.textContent = `Intervention Plan for ${studentId}`;
+
+                    // Format MD to HTML (simple conversion)
+                    const htmlContent = result.plan
+                        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                        .replace(
+                            /### (.*?)\n/g,
+                            '<h4 class="text-lg font-bold text-gray-800 mt-4 mb-2">$1</h4>',
+                        )
+                        .replace(
+                            /- (.*?)\n/g,
+                            '<li class="ml-4 list-disc text-gray-600">$1</li>',
+                        )
+                        .replace(/\n/g, "<br>");
+
+                    planContent.innerHTML = `
+                <div class="prose max-w-none">
+                    ${htmlContent}
+                </div>
+                <div class="mt-8 pt-4 border-t border-gray-100 flex justify-end">
+                     <button class="bg-[#667eea] text-white px-4 py-2 rounded-lg hover:bg-[#5a6fd6] transition-colors" onclick="document.getElementById('action-plan-modal').classList.add('hidden');document.getElementById('action-plan-modal').classList.remove('flex')">
+                        Close Plan
+                    </button>
+                </div>
+            `;
+                } else {
+                    planContent.innerHTML = `
+                <div class="text-center py-12 text-red-500 space-y-4">
+                    <i class="fas fa-exclamation-circle text-4xl"></i>
+                    <p>Failed to generate plan. Please try again.</p>
+                    <p class="text-sm text-gray-400">${result.error || "Unknown error"}</p>
+                </div>
+            `;
+                }
+            });
+    }
+</script>

@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: talent-backend
+    env: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: ENVIRONMENT
+        value: production
+      # Database (Supabase PostgreSQL)
+      - key: DATABASE_URL
+        sync: false
+      # Supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      # Cloudinary
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      # AI
+      - key: AI_PROVIDER
+        value: gemini
+      - key: AI_MODEL_NAME
+        value: gemini-2.5-flash
+      - key: GEMINI_API_KEY
+        sync: false
+      # CORS — set your Vercel dashboard URL here
+      - key: ALLOWED_ORIGINS
+        sync: false

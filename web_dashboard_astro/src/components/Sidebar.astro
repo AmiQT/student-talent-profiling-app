@@ -1,0 +1,92 @@
+---
+import { Image } from "astro:assets";
+import uthmLogo from "/public/uthm.png";
+
+const menuItems = [
+    {
+        id: "overview",
+        label: "Overview",
+        icon: "fas fa-tachometer-alt",
+        href: "/dashboard",
+    },
+    {
+        id: "users",
+        label: "User Management",
+        icon: "fas fa-users",
+        href: "/dashboard/users",
+    },
+    {
+        id: "events",
+        label: "Event Management",
+        icon: "fas fa-calendar-alt",
+        href: "/dashboard/events",
+    },
+    {
+        id: "analytics",
+        label: "Analytics",
+        icon: "fas fa-chart-bar",
+        href: "/dashboard/analytics",
+    },
+    {
+        id: "settings",
+        label: "Settings",
+        icon: "fas fa-cog",
+        href: "/dashboard/settings",
+    },
+];
+
+const { activeSection } = Astro.props;
+---
+
+<nav
+    class="w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 flex flex-col z-30 transition-transform duration-300 ease-in-out transform -translate-x-full lg:translate-x-0"
+    id="sidebar"
+>
+    <div class="h-16 flex items-center gap-3 px-6 border-b border-gray-100">
+        <Image
+            src={uthmLogo}
+            alt="UTHM Logo"
+            class="w-8 h-8 object-contain"
+            width={32}
+            height={32}
+            loading="eager"
+        />
+        <h2 class="text-lg font-bold text-gray-800">Admin Portal</h2>
+    </div>
+
+    <ul class="flex-1 py-6 space-y-1 overflow-y-auto">
+        {
+            menuItems.map((item) => (
+                <li>
+                    <a
+                        href={item.href}
+                        class={`flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors duration-200 ${activeSection === item.id ? "text-[#667eea] bg-[#667eea]/10 border-r-4 border-[#667eea]" : "text-gray-600 hover:text-[#667eea] hover:bg-gray-50"}`}
+                    >
+                        <i class={`${item.icon} w-5 text-center`} />
+                        <span>{item.label}</span>
+                    </a>
+                </li>
+            ))
+        }
+    </ul>
+</nav>
+
+<div
+    class="fixed inset-0 bg-black/50 z-20 lg:hidden hidden"
+    id="sidebar-overlay"
+>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    const toggleBtn = document.getElementById("sidebar-toggle");
+
+    function toggleSidebar() {
+        sidebar?.classList.toggle("-translate-x-full");
+        overlay?.classList.toggle("hidden");
+    }
+
+    toggleBtn?.addEventListener("click", toggleSidebar);
+    overlay?.addEventListener("click", toggleSidebar);
+</script>

@@ -1,0 +1,307 @@
+{
+  "knowledge_base_info": {
+    "title": "FSKTM Comprehensive Knowledge Base",
+    "description": "Complete information about Faculty of Computer Science and Information Technology (FSKTM), UTHM",
+    "version": "1.0",
+    "last_updated": "2024-12-19",
+    "total_staff_profiles": 103,
+    "data_sources": [
+      "https://community.uthm.edu.my/offices/info/28 (Staff Directory)",
+      "https://fsktm.uthm.edu.my/ (Official Website)"
+    ],
+    "optimized_for": "AI Chatbot RAG System - Students & Lecturers"
+  },
+
+  "quick_answers": {
+    "what_is_fsktm": "FSKTM is an acronym for Faculty of Computer Science and Information Technology in Malay: Fakulti Sains Komputer dan Teknologi Maklumat",
+    "total_students": "1,692",
+    "total_academicians": "82",
+    "total_programs": "10",
+    "phone": "+607 453 3606",
+    "email": "fsktm@uthm.edu.my",
+    "address": "86400 Parit Raja, Batu Pahat, Johor, Malaysia",
+    "website": "https://fsktm.uthm.edu.my/",
+    "establishment_year": "2000 (as JTMM), 2010 (as FSKTM)"
+  },
+
+  "faculty_identity": {
+    "official_name": {
+      "english": "Faculty of Computer Science and Information Technology",
+      "malay": "Fakulti Sains Komputer dan Teknologi Maklumat",
+      "acronym": "FSKTM"
+    },
+    "university": "Universiti Tun Hussein Onn Malaysia (UTHM)",
+    "vision": "To be a global technical university in sustainable technology and transportation.",
+    "mission": "Provide technical solution for industry and community based on tauhidic paradigm.",
+    "education_philosophy": "UTHM education and training, founded on the tauhidic paradigm, strive to produce competent, professional and entrepreneurial graduates, driven by advanced technologies for global development.",
+    "strategic_direction": "UTHM as a Global Technopreneur University 2030 (#GTU2030)",
+    "hashtags": ["#UTHMJohor", "#GTU2030", "#UTHMproducesprofessionals", "#PDTI"]
+  },
+
+  "establishment_history": [
+    {
+      "year": "2000",
+      "month": "September", 
+      "milestone": "Started as Department of Information Technology and Multimedia (JTMM), part of Faculty of Engineering Technology at KUiTTHO"
+    },
+    {
+      "year": "2004",
+      "month": "May",
+      "milestone": "Elevated to Faculty of Information Technology and Multimedia (FTMM) at Parit Raja City Campus"
+    },
+    {
+      "year": "2010", 
+      "month": "August",
+      "day": "24",
+      "milestone": "Rebranded to Faculty of Computer Science and Information Technology (FSKTM) with 4 new departments"
+    }
+  ],
+
+  "organizational_structure": {
+    "departments": [
+      {
+        "name": "Department of Software Engineering",
+        "focus_area": "Software development, engineering practices, project management"
+      },
+      {
+        "name": "Department of Multimedia",
+        "focus_area": "Digital media, graphics, animation, multimedia computing"
+      },
+      {
+        "name": "Department of Information Security and Web Technology", 
+        "focus_area": "Cybersecurity, web development, network security"
+      },
+      {
+        "name": "Department of Post-Graduate",
+        "focus_area": "Graduate programs, research supervision"
+      }
+    ]
+  },
+
+  "academic_programs": {
+    "undergraduate": {
+      "total": 5,
+      "programs": [
+        {
+          "code": "MQA/FA0249",
+          "title": "Bachelor of Computer Science (Information Security) With Honours",
+          "department": "Information Security and Web Technology",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-bachelor-degree?view=article&id=185:bachelor-of-computer-science-information-security-with-honours&catid=10"
+        },
+        {
+          "code": "MQA/FA0250", 
+          "title": "Bachelor of Computer Science (Multimedia Computing) With Honours",
+          "department": "Multimedia",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-bachelor-degree?view=article&id=166:bachelor-of-computer-science-multimedia-computing-with-honours&catid=10"
+        },
+        {
+          "code": "MQA/FA0251",
+          "title": "Bachelor of Computer Science (Software Engineering) With Honours", 
+          "department": "Software Engineering",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-bachelor-degree?view=article&id=89:bachelor-of-computer-science-software-engineering&catid=10"
+        },
+        {
+          "code": "MQA/FA0248",
+          "title": "Bachelor of Computer Science (Web Technology) With Honours",
+          "department": "Information Security and Web Technology", 
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-bachelor-degree?view=article&id=196:bachelor-of-computer-science-web-technology-with-honours&catid=10"
+        },
+        {
+          "code": "MQA/FA10044",
+          "title": "Bachelor of Information Technology With Honours",
+          "department": "General IT",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-bachelor-degree?view=article&id=77:bachelor-of-information-technology-with-honours&catid=10"
+        }
+      ]
+    },
+    "postgraduate": {
+      "total": 5,
+      "programs": [
+        {
+          "title": "Master of Information Technology by Coursework",
+          "type": "Coursework",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-master-degree?view=article&id=214:master-of-information-technology-by-coursework&catid=11"
+        },
+        {
+          "title": "Master of Computer Science (Software Engineering) by Mixed Mode",
+          "type": "Mixed Mode",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-master-degree?view=article&id=112:master-of-computer-science-software-engineering&catid=11"
+        },
+        {
+          "title": "Master of Computer Science (Information Security) by Mixed Mode", 
+          "type": "Mixed Mode",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-master-degree?view=article&id=113:master-of-computer-science-information-security&catid=11"
+        },
+        {
+          "title": "Master of Information Technology by Research",
+          "type": "Research",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-master-degree?view=article&id=111:master-of-information-technology&catid=11"
+        },
+        {
+          "title": "Doctor of Philosophy in Information Technology",
+          "type": "PhD",
+          "url": "https://study.uthm.edu.my/en/programmes-and-courses/list-of-philosophy-degree-phd?view=article&id=88:doctor-of-philosophy-in-information-technology&catid=12"
+        }
+      ]
+    }
+  },
+
+  "research_expertise": {
+    "research_centers": {
+      "total": 3,
+      "centers": [
+        {
+          "name": "Artificial Intelligence And Data Mining Centre",
+          "acronym": "AIMC", 
+          "focus": "AI algorithms, machine learning, data analytics, predictive modeling"
+        },
+        {
+          "name": "Center of Intelligent and Autonomous Systems",
+          "acronym": "CIAS",
+          "focus": "Robotics, autonomous vehicles, intelligent control systems"
+        },
+        {
+          "name": "Centre For Cybersecurity And Data Intelligence", 
+          "acronym": "CCDI",
+          "focus": "Cybersecurity, digital forensics, threat intelligence, secure systems"
+        }
+      ]
+    },
+    "focus_groups": {
+      "total": 6,
+      "groups": [
+        {
+          "name": "Software Engineering Research Group",
+          "acronym": "SERG",
+          "focus": "Software development methodologies, quality assurance"
+        },
+        {
+          "name": "Information Security Interest Group", 
+          "acronym": "ISIG",
+          "focus": "Information security, privacy, cryptography"
+        },
+        {
+          "name": "Web Science and Technology",
+          "acronym": "WeST", 
+          "focus": "Web technologies, semantic web, web analytics"
+        },
+        {
+          "name": "Smart Multimedia & Cyber-Reality",
+          "acronym": "SMC",
+          "focus": "Virtual reality, augmented reality, multimedia systems"
+        },
+        {
+          "name": "Applied Information System",
+          "acronym": "AiS",
+          "focus": "Information systems, business intelligence, ERP systems"
+        },
+        {
+          "name": "Software Testing Research Group",
+          "acronym": "SWAT", 
+          "focus": "Software testing, quality assurance, test automation"
+        }
+      ]
+    },
+    "expertise_keywords": [
+      "Artificial Intelligence",
+      "Data Mining", 
+      "Machine Learning",
+      "Autonomous Systems",
+      "Cybersecurity",
+      "Software Engineering",
+      "Information Security",
+      "Web Technology", 
+      "Multimedia Computing",
+      "Software Testing",
+      "Virtual Reality",
+      "Data Analytics"
+    ]
+  },
+
+  "contact_information": {
+    "main_office": {
+      "phone": "+607 453 3606",
+      "email": "fsktm@uthm.edu.my",
+      "address": "Faculty of Computer Science and Information Technology, Universiti Tun Hussein Onn Malaysia (UTHM), 86400 Parit Raja, Batu Pahat, Johor, Malaysia"
+    },
+    "social_media": [
+      {
+        "platform": "Facebook",
+        "url": "https://www.facebook.com/share/15wM6GVWty/?mibextid=wwXIfr"
+      },
+      {
+        "platform": "Instagram", 
+        "url": "https://www.instagram.com/fsktm_uthm?igsh=bjBnNW0xMDlrd3Fz"
+      },
+      {
+        "platform": "TikTok",
+        "url": "https://www.tiktok.com/@fsktm_uthm?_t=ZS-8z3Szm6Ok66&_r=1"
+      }
+    ],
+    "feedback_portal": "https://wecare.uthm.edu.my/"
+  },
+
+  "frequently_asked_questions": [
+    {
+      "category": "General",
+      "question": "What is FSKTM?",
+      "answer": "FSKTM is an acronym for Faculty of Computer Science and Information Technology in Malay: Fakulti Sains Komputer dan Teknologi Maklumat",
+      "keywords": ["definition", "acronym", "faculty name"]
+    },
+    {
+      "category": "General", 
+      "question": "When was FSKTM established?",
+      "answer": "The faculty started in September 2000 as JTMM, became FTMM in May 2004, and was rebranded to FSKTM on 24 August 2010.",
+      "keywords": ["history", "establishment", "timeline"]
+    },
+    {
+      "category": "Contact",
+      "question": "How do I contact FSKTM?",
+      "answer": "Phone: +607 453 3606, Email: fsktm@uthm.edu.my, Address: 86400 Parit Raja, Batu Pahat, Johor, Malaysia",
+      "keywords": ["contact", "phone", "email", "address"]
+    }
+  ],
+
+  "common_student_queries": {
+    "programs": [
+      "What courses does FSKTM offer?",
+      "Is there a cybersecurity program?", 
+      "What's the difference between CS and IT degree?",
+      "Are there postgraduate programs available?"
+    ],
+    "staff": [
+      "Who teaches Software Engineering?",
+      "How do I contact my lecturer?",
+      "Who is the Dean of FSKTM?",
+      "Which lecturers specialize in AI?"
+    ],
+    "facilities": [
+      "Where is FSKTM located?",
+      "What research facilities are available?",
+      "How do I join a research group?"
+    ],
+    "general": [
+      "How many students are in FSKTM?",
+      "What is FSKTM known for?",
+      "How do I apply to FSKTM programs?"
+    ]
+  },
+
+  "ai_query_optimization": {
+    "search_keywords": [
+      "fsktm", "fakulti sains komputer", "computer science", "information technology", 
+      "uthm", "universiti tun hussein onn", "software engineering", "multimedia",
+      "information security", "web technology", "artificial intelligence", 
+      "cybersecurity", "data mining", "lecturer", "staff", "program", "course",
+      "contact", "email", "phone", "address", "research", "postgraduate"
+    ],
+    "intent_categories": {
+      "program_inquiry": ["program", "course", "degree", "study", "major"],
+      "staff_lookup": ["lecturer", "staff", "teacher", "professor", "contact"],
+      "facility_info": ["location", "address", "building", "lab", "facility"],
+      "research_info": ["research", "center", "group", "expertise", "focus"],
+      "contact_info": ["phone", "email", "contact", "reach", "call"],
+      "general_info": ["what", "when", "where", "how", "why", "about"]
+    }
+  }
+}
