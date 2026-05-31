@@ -36,7 +36,7 @@ The AI layer goes beyond a simple chatbot. It is built on **Google Gemini 2.5 Fl
 | Event Program | Browse, register, and track university events (kokurikulum) | Production |
 | AI Assistant | Voice-enabled agentic chatbot in Bahasa Melayu with tool calling and memory | Production |
 | Talent Quiz | Discover strengths through a guided quiz | Production |
-| Predictive Analytics | Risk score and participation insights for university admin | Beta |
+| Intelligent Profiling | AI-powered risk assessment and talent analysis based on student activity, CGPA, and participation history | Beta |
 | PDF Reports | Auto-generated achievement reports for departments | Production |
 
 ---
