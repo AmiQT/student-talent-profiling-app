@@ -7,11 +7,23 @@
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-A platform for university students to build their talent profile, engage with ongoing programs and events, and connect with the university community.
+An end-to-end platform for profiling UTHM student talent. Students build a profile, showcase achievements, join events, and interact through a social feed. University admins get rich analytics and AI-powered insights through a dedicated web dashboard.
 
-Students create a profile, showcase their achievements and projects, join events, and interact through a social feed. The platform includes an AI assistant in Bahasa Melayu to help students navigate faculty info and university programs.
+The AI assistant responds in **Bahasa Melayu** by default, with Gen Z-style conversational tone built for local students.
 
 > **Security note:** this repository ships without secrets. Populate your own `.env` files before running any service. Never commit credentials.
+
+---
+
+## Agentic AI
+
+The AI layer goes beyond a simple chatbot. It is built on **Google Gemini 2.5 Flash** with **LangChain and LangGraph**, giving it the ability to:
+
+- **Converse in Bahasa Melayu** with natural, Gen Z-style responses tailored for Malaysian students
+- **Call tools** to query the database, fetch student analytics, and retrieve faculty information
+- **Remember context** across a conversation using built-in conversation memory
+- **Route intelligently** between a fast direct mode and a full agentic mode depending on query complexity
+- **Answer faculty questions** using RAG with UTHM knowledge base via Supabase pgvector
 
 ---
 
@@ -22,9 +34,9 @@ Students create a profile, showcase their achievements and projects, join events
 | Student Profile | Build a talent profile with skills, achievements, projects, and experiences | Production |
 | Showcase Feed | Post and share achievements like a social feed | Production |
 | Event Program | Browse, register, and track university events (kokurikulum) | Production |
-| AI Assistant | Voice-enabled chatbot in Bahasa Melayu with UTHM faculty context | Production |
+| AI Assistant | Voice-enabled agentic chatbot in Bahasa Melayu with tool calling and memory | Production |
 | Talent Quiz | Discover strengths through a guided quiz | Production |
-| Predictive Analytics | Risk and participation insights for university admin | Beta |
+| Predictive Analytics | Risk score and participation insights for university admin | Beta |
 | PDF Reports | Auto-generated achievement reports for departments | Production |
 
 ---
@@ -56,7 +68,7 @@ student-talent-profiling-app/
 Supabase (Auth + PostgreSQL + pgvector)
             |
             v
-     FastAPI Backend  <---  AI Layer (Gemini 2.5 Flash + LangChain + RAG)
+     FastAPI Backend  <---  Agentic AI (Gemini + LangGraph + RAG)
       |           |
       v           v
 Flutter Mobile   Astro Web Dashboard
@@ -71,7 +83,7 @@ Flutter Mobile   Astro Web Dashboard
 | :--- | :--- |
 | Mobile | Flutter, Dart 3, Provider, Supabase Flutter SDK |
 | Backend | FastAPI, SQLAlchemy, Alembic, PyJWT |
-| AI | Google Gemini 2.5 Flash, LangChain, LangGraph, RAG via pgvector |
+| AI | Google Gemini 2.5 Flash, LangChain, LangGraph, RAG via pgvector, fastembed |
 | Dashboard | Astro v5, Tailwind v4, TypeScript, Chart.js |
 | Database | Supabase (PostgreSQL + pgvector) |
 | Media | Cloudinary |
