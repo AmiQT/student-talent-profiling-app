@@ -29,15 +29,15 @@ The AI layer goes beyond a simple chatbot. It is built on **Google Gemini 2.5 Fl
 
 ## Features
 
-| Feature | Description | Status |
-| :--- | :--- | :--- |
-| Student Profile | Build a talent profile with skills, achievements, projects, and experiences | Production |
-| Showcase Feed | Post and share achievements like a social feed | Production |
-| Event Program | Browse, register, and track university events (kokurikulum) | Production |
-| AI Assistant | Voice-enabled agentic chatbot in Bahasa Melayu with tool calling and memory | Production |
-| Talent Quiz | Discover strengths through a guided quiz | Production |
-| Intelligent Profiling | AI-powered risk assessment and talent analysis based on student activity, CGPA, and participation history | Beta |
-| PDF Reports | Auto-generated achievement reports for departments | Production |
+| Feature | Description |
+| :--- | :--- |
+| Student Profile | Build a talent profile with skills, achievements, projects, and experiences |
+| Showcase Feed | Post and share achievements like a social feed |
+| Event Program | Browse, register, and track university events (kokurikulum) |
+| AI Assistant | Voice-enabled agentic chatbot in Bahasa Melayu with tool calling and memory |
+| Talent Quiz | Discover strengths through a guided quiz |
+| Intelligent Profiling | AI-powered risk assessment and talent analysis based on student activity, CGPA, and participation history |
+| PDF Reports | Auto-generated achievement reports for departments |
 
 ---
 
